@@ -69,5 +69,17 @@ public class B1Val implements B1Expr {
 		}
 		
 	}
+
+	@Override
+	public ExprType getExprType() {
+		return ExprType.IF;
+		
+	}
+
+	@Override
+	public boolean isContext() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

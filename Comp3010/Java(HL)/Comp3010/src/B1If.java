@@ -1,4 +1,3 @@
-
 public class B1If implements B1Expr {
 	private B1Expr expr1;
 	private B1Expr expr2;
@@ -26,6 +25,33 @@ public class B1If implements B1Expr {
 	@Override
 	public String pPrint() {
 		return "(if " + expr1.pPrint() + " then " + expr3.pPrint() + " else " + expr2.pPrint() + ")";
+	}
+
+	@Override
+	public ExprType getExprType() {
+		return ExprType.IF;
+		
+	}
+
+	@Override
+	public boolean isContext() {
+		// TODO Auto-generated method stub
+		return false;
+		
+	}
+
+	public B1Expr getExpr(int i) {
+		if(i == 0) {
+			return expr1;
+			
+		}else if(i == 1) {
+			return expr2;
+			
+		}else {
+			return expr3;
+			
+		}
+		
 	}
 	
 }

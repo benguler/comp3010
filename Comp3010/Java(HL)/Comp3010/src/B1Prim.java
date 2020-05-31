@@ -29,5 +29,17 @@ public class B1Prim implements B1Expr {
 		return primType;
 		
 	}
+
+	@Override
+	public ExprType getExprType() {
+		return ExprType.PRIM;
+		
+	}
+
+	@Override
+	public boolean isContext() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

@@ -116,6 +116,14 @@ class TestSuite {
 		assertEquals(app8.desugarB1().interp(), 1 ," != 1");
 		assertEquals(app9.desugarB1().interp(), 0 ," != 0");
 		
+		//Small-Step Tests
+		B1Functions b1Functions = new B1Functions();
+		
+		System.out.println(if3.desugarB1().pPrint());
+		System.out.println(b1Functions.smallStep(if3.desugarB1()).pPrint());
+		
+		assertEquals(if3.desugarB1().interp(), b1Functions.smallStep(if3.desugarB1()).interp() ," !!! ");
+		
 	}
 
 }

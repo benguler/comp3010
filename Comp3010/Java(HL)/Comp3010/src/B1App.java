@@ -80,4 +80,21 @@ public class B1App implements B1Expr{
 		
 	}
 
+	@Override
+	public ExprType getExprType() {
+		return ExprType.APP;
+		
+	}
+
+	@Override
+	public boolean isContext() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public ArrayList<B1Expr> getExprs() {
+		return exprs;
+		
+	}
+
 }
