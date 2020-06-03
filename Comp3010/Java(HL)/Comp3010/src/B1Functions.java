@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class B1Functions {
@@ -8,17 +10,17 @@ public class B1Functions {
 	public B1Expr plug(Context context, B1Expr expr) {
 		switch(context.getContextType()) {
 			case EMPTY:
-				return expr;
+				return expr;									//[] x e -> e
 				
 			case APP:
 				ArrayList<B1Expr> appExprs = context.getAppContext();
 				
 				for(int i = 0; i < appExprs.size(); i++) {
 					switch(appExprs.get(i).getExprType()) {
-						case CON:
-							appExprs.set(i, expr);
+						case CON:								//Case found []
+							appExprs.set(i, expr);				//Plug [] in app
 							
-							return new B1App(appExprs);
+							return new B1App(appExprs);			//(e' ... [] ... e'') x e -> (e' ... e ... e'') 
 					
 						default:
 							break;
@@ -32,10 +34,10 @@ public class B1Functions {
 				
 				for(int i = 0; i < 3; i++) {
 					switch(ifExprs[i].getExprType()) {
-						case CON:
-							ifExprs[i] = expr;
+						case CON:							//Case found []
+							ifExprs[i] = expr;				//Plug [] in if statement
 							
-							return new B1If(ifExprs[0], ifExprs[1], ifExprs[2]);
+							return new B1If(ifExprs[0], ifExprs[1], ifExprs[2]);	//(if [] e' e'') x e -> (if e e' e'')
 					
 						default:
 							break;
@@ -53,7 +55,7 @@ public class B1Functions {
 	}
 	
 	public B1Expr[] findRedex(B1Expr expr){
-		B1Expr[] pair = new B1Expr[2];
+		B1Expr[] pair = new B1Expr[2];	//[context, redex]
 		boolean hasRedEx = false;
 		
 		switch(expr.getExprType()) {
@@ -70,18 +72,18 @@ public class B1Functions {
 						case VAL:
 							break;
 							
-						default:
+						default:	//If expr is not a val, it is reducible
 							hasRedEx = true;
 							
 							pair[1] = ifExpr.getExpr(i);
 							
-							if(i == 0) {
+							if(i == 0) {		//1st expr is reducible
 								pair[0] = new Context(new Context(), ifExpr.getExpr(1), ifExpr.getExpr(2), 0);
 								
-							}else if(i == 1) {
+							}else if(i == 1) {	//2nd expr is reducible
 								pair[0] = new Context(new Context(), ifExpr.getExpr(0), ifExpr.getExpr(2), 1);
 								
-							}else {
+							}else {				//3rd expr is reducible
 								pair[0] = new Context(new Context(), ifExpr.getExpr(0), ifExpr.getExpr(1), 2);
 								
 							}
@@ -111,16 +113,13 @@ public class B1Functions {
 					case VAL:
 						break;
 					
-					default:
+					default:	//If expr is not a val, it is reducible
 						pair[1] = appExprs.get(i);
 						
-						if(i != 0) {
-							newExprs1 = new ArrayList<B1Expr>(appExprs.subList(0, i-1));
-							
-						}
+						newExprs1 = new ArrayList<B1Expr>(appExprs.subList(0, i-1));	//exprs before redex
 						
-						if(i != appExprs.size()-1) {
-							newExprs2 =  new ArrayList<B1Expr> (appExprs.subList(i+1, appExprs.size()-1));
+						if(i != appExprs.size()-1) {	//If there are exprs after redex
+							newExprs2 =  new ArrayList<B1Expr> (appExprs.subList(i+1, appExprs.size()-1));	//exprs before redex
 							
 						}
 						
@@ -143,16 +142,35 @@ public class B1Functions {
 		
 	}
 	
+	//Small step interpreter
 	public B1Expr smallStep(B1Expr expr) {
-		B1Expr[] pair = findRedex(expr);
+		B1Expr[] pair = findRedex(expr);		//Find redex
 		
-		if(pair == null) {
-			return new B1Val(expr.interp());
+		if(pair == null) {						//If there is no redex in expr
+			return new B1Val(expr.interp());	//Return interpreted expr
 			
-		}
+		}	//else
 		
-		return plug((Context)pair[0], smallStep(pair[1]));
+		return plug((Context)pair[0], smallStep(pair[1]));	//retun expression after step
 		
+	}
+	
+	//Emits B1 programs written in java to B1 programs written in c
+	
+	public void emit(B1Expr expr) {
+		try {
+		      File myObj = new File("filename.txt");
+		      if (myObj.createNewFile()) {
+		        System.out.println("File created: " + myObj.getName());
+		      } else {
+		        System.out.println("File already exists.");
+		      }
+		    } catch (IOException e) {
+		      System.out.println("An error occurred.");
+		      e.printStackTrace();
+		    }
+		  }
+	
 	}
 
 }

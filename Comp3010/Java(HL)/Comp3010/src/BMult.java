@@ -8,7 +8,7 @@ public class BMult implements BExpr {
 		
 	}
 
-	public BMult (BExpr lhs, BExpr rhs) {
+	public BMult (BExpr lhs, BExpr rhs) {	//(* e e)
 		this.lhs = lhs;
 		this.rhs = rhs;
 		

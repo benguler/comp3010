@@ -12,21 +12,21 @@ public class B1Val implements B1Expr {
 	private boolean bool;
 	private B1Prim prim;
 	
-	public B1Val(int num) {
+	public B1Val(int num) {			//v := n
 		this.num = num;
 		
 		valType = ValType.NUM;
 		
 	}
 	
-	public B1Val(boolean bool) {
+	public B1Val(boolean bool) { 	//v := bool
 		this.bool = bool;
 		
 		valType = ValType.BOOL;
 		
 	}
 	
-	public B1Val(B1Prim prim) {
+	public B1Val(B1Prim prim) {		//v := prim
 		this.prim = prim;
 		
 		valType = ValType.PRIM;
@@ -74,12 +74,6 @@ public class B1Val implements B1Expr {
 	public ExprType getExprType() {
 		return ExprType.IF;
 		
-	}
-
-	@Override
-	public boolean isContext() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 	
 }

@@ -15,6 +15,4 @@ public interface B1Expr {
 	
 	public ExprType getExprType();
 	
-	public boolean isContext();
-	
 }

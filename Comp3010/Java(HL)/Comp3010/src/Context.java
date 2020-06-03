@@ -20,20 +20,20 @@ public class Context implements B1Expr{
 		
 	}
 	
-	public Context(ArrayList<B1Expr> exprs1, Context context, ArrayList<B1Expr> exprs2) {
+	public Context(ArrayList<B1Expr> exprs1, Context context, ArrayList<B1Expr> exprs2) {	//(e ... [] ... e)
 		this.contextType = ContextType.APP;
 		
 		ArrayList<B1Expr> exprs = new ArrayList<B1Expr> ();
 		
 		for(B1Expr e: exprs1) {
-			this.appContext.add(e);
+			this.appContext.add(e);		//e ...
 			
 		}
 		
-		this.appContext.add(context);
+		this.appContext.add(context);	//[]
 		
 		for(B1Expr e: exprs2) {
-			this.appContext.add(e);
+			this.appContext.add(e);		//... e
 			
 		}
 		
@@ -43,19 +43,19 @@ public class Context implements B1Expr{
 		this.contextType = ContextType.IF;
 		
 		switch(intType) {
-			case 0:
+			case 0:	//(if [] e e)
 				this.ifContext[0] = context;
 				this.ifContext[1] = expr1;
 				this.ifContext[2] = expr2;
 				break;
 				
-			case 1:
+			case 1:	//(if e [] e)
 				this.ifContext[1] = context;
 				this.ifContext[0] = expr1;
 				this.ifContext[2] = expr2;
 				break;
 				
-			case 2:
+			case 2:	//(if e e [])
 				this.ifContext[2] = context;
 				this.ifContext[0] = expr1;
 				this.ifContext[1] = expr2;
@@ -110,12 +110,6 @@ public class Context implements B1Expr{
 	public ExprType getExprType() {
 		return ExprType.CON;
 		
-	}
-
-	@Override
-	public boolean isContext() {
-		// TODO Auto-generated method stub
-		return true;
 	}
 	
 }

@@ -10,6 +10,7 @@ public class Cons implements BSexpr{
 		
 	}
 
+	//desugar for b0
 	@Override
 	public BExpr desugar() {
 		if(lhs.getType() == type.Atom) {
@@ -33,6 +34,7 @@ public class Cons implements BSexpr{
 		
 	}
 	
+	//desugar for b1
 	@Override
 	public B1Expr desugarB1() {
 		if(lhs.getType() == type.Atom) {
@@ -42,7 +44,7 @@ public class Cons implements BSexpr{
 			if(atom == "if") {
 				Cons cons2 = (Cons)cons.getRhs();
 				
-				return new B1If(cons.getLhs().desugarB1(), cons2.getLhs().desugarB1(), cons2.getRhs().desugarB1());
+				return new B1If(cons.getLhs().desugarB1(), cons2.getLhs().desugarB1(), cons2.getRhs().desugarB1());	//cons(if, cons(e, cons(e, e))) 
 				
 			}
 			
@@ -52,7 +54,7 @@ public class Cons implements BSexpr{
 			params.add(cons.getLhs().desugarB1());
 			params.add(cons.getRhs().desugarB1());
 			
-			return new B1App(params);
+			return new B1App(params);	//cons(*, cons(e, e)) 
 			
 		}
 		

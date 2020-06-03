@@ -3,14 +3,14 @@ import java.util.ArrayList;
 public class B1App implements B1Expr{
 	private ArrayList<B1Expr> exprs;
 	
-	public B1App(ArrayList<B1Expr> exprs) {
+	public B1App(ArrayList<B1Expr> exprs) {	//(e ... e)
 		this.exprs = exprs;
 		
 	}
 
 	@Override
 	public int interp() {
-		B1Val prim = (B1Val)exprs.get(0);
+		B1Val prim = (B1Val)exprs.get(0);	//First expr in an app contains a prim
 		
 		switch(prim.pPrint()) {
 			case "+":
@@ -84,12 +84,6 @@ public class B1App implements B1Expr{
 	public ExprType getExprType() {
 		return ExprType.APP;
 		
-	}
-
-	@Override
-	public boolean isContext() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	public ArrayList<B1Expr> getExprs() {

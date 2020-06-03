@@ -3,7 +3,7 @@ public class B1If implements B1Expr {
 	private B1Expr expr2;
 	private B1Expr expr3;
 	
-	public B1If(B1Expr expr1, B1Expr expr2, B1Expr expr3) {
+	public B1If(B1Expr expr1, B1Expr expr2, B1Expr expr3) { //(if e e e)
 		this.expr1 = expr1;
 		this.expr2 = expr2;
 		this.expr3 = expr3;
@@ -30,13 +30,6 @@ public class B1If implements B1Expr {
 	@Override
 	public ExprType getExprType() {
 		return ExprType.IF;
-		
-	}
-
-	@Override
-	public boolean isContext() {
-		// TODO Auto-generated method stub
-		return false;
 		
 	}
 

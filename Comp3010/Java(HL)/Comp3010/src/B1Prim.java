@@ -1,7 +1,7 @@
 
 public class B1Prim implements B1Expr {
 
-	String primType;
+	String primType;	//+, *, -, /, <, <=, =, >, >=
 	
 	public B1Prim(String primType) {
 		this.primType = primType;
@@ -34,12 +34,6 @@ public class B1Prim implements B1Expr {
 	public ExprType getExprType() {
 		return ExprType.PRIM;
 		
-	}
-
-	@Override
-	public boolean isContext() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 	
 }

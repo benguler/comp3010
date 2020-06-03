@@ -8,7 +8,7 @@ public class BAdd implements BExpr {
 		
 	}
 	
-	public BAdd(BExpr lhs, BExpr rhs) {
+	public BAdd(BExpr lhs, BExpr rhs) {	//(+ e e)
 		this.lhs = lhs;
 		this.rhs = rhs;
 		

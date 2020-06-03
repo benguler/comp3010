@@ -7,6 +7,7 @@ public class Atom implements BSexpr{
 		
 	}
 
+	//Desugar for B1
 	@Override
 	public BExpr desugar() {
 		
@@ -37,9 +38,10 @@ public class Atom implements BSexpr{
 		
 	}
 
+	//Desugar for B1
 	@Override
 	public B1Expr desugarB1() {
-		 try { 
+		 try { 												//If atom contains an integer
 		        return new B1Val(Integer.parseInt(atom));
 		       
 		        
@@ -52,7 +54,7 @@ public class Atom implements BSexpr{
 		 		return new B1Val(true);
 		 	case "false":
 		 		return new B1Val(false);
-		 	default:
+		 	default:										//If atom does not contain an int or a bool, it contains a prim
 		 		return new B1Val(new B1Prim(atom));
 		 
 		 }

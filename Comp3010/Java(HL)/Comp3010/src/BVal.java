@@ -3,7 +3,7 @@ public class BVal implements BExpr {
 	
 	private int n;
 	
-	public BVal (int n) {
+	public BVal (int n) {	//v := n
 		this.n = n;
 		
 	}
