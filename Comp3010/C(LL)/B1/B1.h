@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <string.h>
+#include <string>
 #include <iostream> 
 #include <vector>
 #include <stdarg.h>
@@ -25,11 +25,12 @@ struct B1Expr {
 		} b1if;
 		
 		struct {
-			std::vector<B1Expr> *exprs;
+			std::vector<B1Expr *> *exprs;
 			
 		} b1app;
 		
 		struct {
+			bool isBool;
 			bool b;
 			int n;
 			struct B1Expr *prim;
@@ -37,7 +38,7 @@ struct B1Expr {
 		} b1val;
 		
 		struct {
-			char t;
+			const char *pType;
 			
 		} b1prim;
 		
@@ -47,7 +48,7 @@ struct B1Expr {
 
 struct B1Expr *newIf(struct B1Expr *expr1, struct B1Expr *expr2, struct B1Expr *expr3);
 
-struct B1Expr *newApp(int n, B1Expr *expr, ...);
+struct B1Expr *newApp(int n, ...);
 
 struct B1Expr *newVal(int n);
 
@@ -55,8 +56,11 @@ struct B1Expr *newVal(bool b);
 
 struct B1Expr *newVal(struct B1Expr *prim);
 
-struct B1Expr *newPrim(char t);
+struct B1Expr *newPrim(const char *pType);
 
+int interp(struct B1Expr *expr);
+
+int main(int argc, char**argv);
 
 	
 #endif

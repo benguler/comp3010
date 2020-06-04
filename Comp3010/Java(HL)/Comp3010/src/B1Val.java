@@ -1,6 +1,6 @@
 
 public class B1Val implements B1Expr {
-	private enum ValType{
+	public enum ValType{
 		NUM,
 		BOOL,
 		PRIM
@@ -45,7 +45,7 @@ public class B1Val implements B1Expr {
 				
 				return 0;
 			default:
-				return (Integer) null;
+				return 0;
 				
 		
 		}
@@ -70,9 +70,25 @@ public class B1Val implements B1Expr {
 		
 	}
 
+	public ValType getValType() {
+		return valType;
+	}
+
+	public int getNum() {
+		return num;
+	}
+
+	public boolean getBool() {
+		return bool;
+	}
+
+	public B1Prim getPrim() {
+		return prim;
+	}
+
 	@Override
 	public ExprType getExprType() {
-		return ExprType.IF;
+		return ExprType.VAL;
 		
 	}
 	

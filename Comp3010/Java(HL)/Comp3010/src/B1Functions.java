@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.IOException;
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 public class B1Functions {
@@ -116,7 +117,10 @@ public class B1Functions {
 					default:	//If expr is not a val, it is reducible
 						pair[1] = appExprs.get(i);
 						
-						newExprs1 = new ArrayList<B1Expr>(appExprs.subList(0, i-1));	//exprs before redex
+						if(i != 0) {	//If there are exprs after redex
+							newExprs1 = new ArrayList<B1Expr>(appExprs.subList(0, i-1));	//exprs before redex
+							
+						}
 						
 						if(i != appExprs.size()-1) {	//If there are exprs after redex
 							newExprs2 =  new ArrayList<B1Expr> (appExprs.subList(i+1, appExprs.size()-1));	//exprs before redex
@@ -151,7 +155,61 @@ public class B1Functions {
 			
 		}	//else
 		
-		return plug((Context)pair[0], smallStep(pair[1]));	//retun expression after step
+		return plug((Context)pair[0], smallStep(pair[1]));	//return expression after step
+		
+	}
+	
+	//Return c equivalent of expr constructor
+	
+	public String toC(B1Expr expr) {
+		switch(expr.getExprType()) {
+			case IF:
+				B1If ifExpr = (B1If)expr;
+				return "newIf(" + toC(ifExpr.getExpr(0)) + ", " + toC(ifExpr.getExpr(1)) + ", " + toC(ifExpr.getExpr(2)) + ")";
+				
+			case APP:
+				B1App appExpr = (B1App)expr;
+				ArrayList<B1Expr> exprs = appExpr.getExprs();
+				
+				String appC = "newApp(" + String.valueOf(exprs.size());
+				
+				for(B1Expr e : exprs) {
+					appC += ", " + toC(e);
+					
+				}
+				
+				appC += ")";
+				
+				return appC;
+				
+			case VAL:
+				B1Val valExpr = (B1Val)expr;
+				
+				switch(valExpr.getValType()) {
+					case NUM:
+						return "newVal(" + String.valueOf(valExpr.getNum()) +")";
+				
+					case BOOL:
+						return valExpr.getBool() ? "newVal(true)":"newVal(false)";
+						
+					case PRIM:
+						return "newVal(" + toC(valExpr.getPrim()) + ")";
+						
+					default:
+						break;
+					
+				
+				}
+				
+			case PRIM:
+				B1Prim primExpr = (B1Prim)expr;
+				
+				return "newPrim(\"" + primExpr.getPrimType() + "\")";
+				
+			default:
+				return null;
+		
+		}
 		
 	}
 	
@@ -159,18 +217,38 @@ public class B1Functions {
 	
 	public void emit(B1Expr expr) {
 		try {
-		      File myObj = new File("filename.txt");
+		      File myObj = new File("../../C(LL)/B1/main.cpp");
 		      if (myObj.createNewFile()) {
 		        System.out.println("File created: " + myObj.getName());
+		        
 		      } else {
 		        System.out.println("File already exists.");
+		        
 		      }
+		      
+		    } catch (IOException e) {
+		      System.out.println("An error occurred.");
+		      e.printStackTrace();
+		      
+		    }
+		
+		try {
+		      FileWriter myWriter = new FileWriter("../../C(LL)/B1/main.cpp");
+		      myWriter.write("#include <iostream>\n#include \"B1.h\"\n\n");
+		      myWriter.write("int main( int argc, char** argv ) {\n");
+		      
+		      myWriter.write("	" + this.toC(expr) + ";\n\n");
+		      
+		      myWriter.write("	return 0;\n\n}");
+		      myWriter.close();
+		      
+		      System.out.println("Successfully wrote to the file.");
+		      
 		    } catch (IOException e) {
 		      System.out.println("An error occurred.");
 		      e.printStackTrace();
 		    }
-		  }
-	
+		
 	}
 
 }

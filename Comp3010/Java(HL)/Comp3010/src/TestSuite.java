@@ -41,6 +41,8 @@ class TestSuite {
 		assertEquals(mix2.interp(), 12 ," != 12");
 		assertEquals(mix3.interp(), 14 ," != 14");
 		
+		System.out.println(mix3.pPrint());
+		
 		//B0 Desugar Tests
 		
 		Atom val4 = new Atom("1");	//1
@@ -116,13 +118,19 @@ class TestSuite {
 		assertEquals(app8.desugarB1().interp(), 1 ," != 1");
 		assertEquals(app9.desugarB1().interp(), 0 ," != 0");
 		
-		//Small-Step Tests
+		System.out.println(if3.desugarB1().pPrint());
+		
 		B1Functions b1Functions = new B1Functions();
 		
-		System.out.println(if3.desugarB1().pPrint());
-		System.out.println(b1Functions.smallStep(if3.desugarB1()).pPrint());
+		//Small-Step Tests
 		
 		assertEquals(if3.desugarB1().interp(), b1Functions.smallStep(if3.desugarB1()).interp() ," !!! ");
+		
+		System.out.println(if3.desugarB1().pPrint() + " == " + b1Functions.smallStep(if3.desugarB1()).pPrint());
+		
+		//emit tests
+		
+		b1Functions.emit(if3.desugarB1());
 		
 	}
 
