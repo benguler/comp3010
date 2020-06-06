@@ -11,41 +11,26 @@ public class B1Functions {
 	public B1Expr plug(Context context, B1Expr expr) {
 		switch(context.getContextType()) {
 			case EMPTY:
-				return expr;									//[] x e -> e
+				return expr;								//[] x e -> e
 				
 			case APP:
-				ArrayList<B1Expr> appExprs = context.getAppContext();
+				ArrayList<B1Expr> appExprs = new ArrayList<B1Expr>(context.getAppExprs1());
+				appExprs.add(expr);
+				appExprs.addAll(context.getAppExprs2());
 				
-				for(int i = 0; i < appExprs.size(); i++) {
-					switch(appExprs.get(i).getExprType()) {
-						case CON:								//Case found []
-							appExprs.set(i, expr);				//Plug [] in app
-							
-							return new B1App(appExprs);			//(e' ... [] ... e'') x e -> (e' ... e ... e'') 
-					
-						default:
-							break;
-						
-					}
-					
-				}
+				return new B1App(appExprs);					//(e ... [] ... e) x e -> (e ... e ... e)
 				
 			case IF:
-				B1Expr[] ifExprs = context.getIfContext();
+				switch(context.getIfType()) {
+					case 0:
+						return new B1If(expr, context.getIfExpr1(), context.getIfExpr2());	//if([], e', e'') x e -> if(e, e', e'')
+					case 1:
+						return new B1If(context.getIfExpr1(), expr, context.getIfExpr2());	//if(e', [], e'') x e -> if(e', e, e'')
+					case 2:
+						return new B1If(context.getIfExpr1(), context.getIfExpr2(), expr);	//if(e', e'', []) x e -> if(e', e'', e)
+					default:
+						break;
 				
-				for(int i = 0; i < 3; i++) {
-					switch(ifExprs[i].getExprType()) {
-						case CON:							//Case found []
-							ifExprs[i] = expr;				//Plug [] in if statement
-							
-							return new B1If(ifExprs[0], ifExprs[1], ifExprs[2]);	//(if [] e' e'') x e -> (if e e' e'')
-					
-						default:
-							break;
-					
-					}
-					
-					
 				}
 				
 			default:
@@ -55,6 +40,7 @@ public class B1Functions {
 		
 	}
 	
+	//Given an expression return a context and a redex
 	public B1Expr[] findRedex(B1Expr expr){
 		B1Expr[] pair = new B1Expr[2];	//[context, redex]
 		boolean hasRedEx = false;
@@ -73,7 +59,7 @@ public class B1Functions {
 						case VAL:
 							break;
 							
-						default:	//If expr is not a val, it is reducible
+						default:	//If expr is not a val, it is reducible	(either an if or an app)
 							hasRedEx = true;
 							
 							pair[1] = ifExpr.getExpr(i);
@@ -155,7 +141,7 @@ public class B1Functions {
 			
 		}	//else
 		
-		return plug((Context)pair[0], smallStep(pair[1]));	//return expression after step
+		return smallStep(plug((Context)pair[0], smallStep(pair[1])));	//do step on redex, return expression after step
 		
 	}
 	

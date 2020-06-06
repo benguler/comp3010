@@ -24,7 +24,7 @@ public class B1If implements B1Expr {
 
 	@Override
 	public String pPrint() {
-		return "(if " + expr1.pPrint() + " then " + expr3.pPrint() + " else " + expr2.pPrint() + ")";
+		return "(if " + expr1.pPrint() + " then " + expr2.pPrint() + " else " + expr3.pPrint() + ")";
 	}
 
 	@Override

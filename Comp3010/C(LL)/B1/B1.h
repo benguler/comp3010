@@ -46,6 +46,34 @@ struct B1Expr {
 	
 };
 
+enum KType {KRET, KIF, KAPP};
+
+struct B1Con {
+	enum KType type;
+	
+	union{
+		struct {
+			
+		} kret;
+		
+		struct {
+			struct B1Expr *expr1;
+			struct B1Expr *expr2;
+			struct B1Con *k;
+			
+		} kif;
+		
+		struct {
+			std::vector<B1Expr *> *values;
+			std::vector<B1Expr *> *exprs;
+			struct B1Con *k;
+			
+		} kapp;
+		
+	} data;
+	
+};
+
 struct B1Expr *newIf(struct B1Expr *expr1, struct B1Expr *expr2, struct B1Expr *expr3);
 
 struct B1Expr *newApp(int n, ...);
@@ -59,6 +87,12 @@ struct B1Expr *newVal(struct B1Expr *prim);
 struct B1Expr *newPrim(const char *pType);
 
 int interp(struct B1Expr *expr);
+
+struct B1Con *newKRet();
+
+struct B1Con *newKIf(struct B1Expr *expr1, struct B1Expr *expr2, struct B1Con *k);
+
+struct B1Con *newKApp(std::vector<B1Expr *> *values, std::vector<B1Expr *> *exprs, struct B1Con *k);
 
 int main(int argc, char**argv);
 

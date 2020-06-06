@@ -187,3 +187,38 @@ int interp(struct B1Expr *expr){
 	
 }
 
+struct B1Con *newKRet(){
+	struct B1Con *con = (struct B1Con *)malloc(sizeof(struct B1Con));
+	
+	con->type = KRET;
+	
+	return con;
+	
+}
+
+struct B1Con *newKIf(struct B1Expr *expr1, struct B1Expr *expr2, struct B1Con *k){
+	struct B1Con *con = (struct B1Con *)malloc(sizeof(struct B1Con));
+	
+	con->type = KIF;
+	
+	con->data.kif.expr1 = expr1;
+	con->data.kif.expr2 = expr2;
+	con->data.kif.k = k;
+	
+	return con;
+	
+}
+
+struct B1Con *newKApp(std::vector<B1Expr *> *values, std::vector<B1Expr *> *exprs, struct B1Con *k){
+	struct B1Con *con = (struct B1Con *)malloc(sizeof(struct B1Con));
+	
+	con->type = KAPP;
+	
+	con->data.kapp.values = values;
+	con->data.kapp.exprs = exprs;
+	con->data.kapp.k = k;
+	
+	return con;
+	
+}
+

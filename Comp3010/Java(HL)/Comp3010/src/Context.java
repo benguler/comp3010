@@ -11,9 +11,15 @@ public class Context implements B1Expr{
 	
 	private ContextType contextType;
 	
-	private B1Expr[] ifContext = new B1Expr[3];
+	private Context ifContext;
+	private B1Expr ifExpr1;
+	private B1Expr ifExpr2;
+	private int ifType;
 	
-	private ArrayList<B1Expr> appContext = new ArrayList<B1Expr> ();
+	private ArrayList<B1Expr> appExprs1 = new ArrayList<B1Expr> ();
+	private Context appContext;
+	private ArrayList<B1Expr> appExprs2 = new ArrayList<B1Expr> ();
+	
 	
 	public Context() {
 		this.contextType = ContextType.EMPTY;
@@ -23,48 +29,18 @@ public class Context implements B1Expr{
 	public Context(ArrayList<B1Expr> exprs1, Context context, ArrayList<B1Expr> exprs2) {	//(e ... [] ... e)
 		this.contextType = ContextType.APP;
 		
-		ArrayList<B1Expr> exprs = new ArrayList<B1Expr> ();
-		
-		for(B1Expr e: exprs1) {
-			this.appContext.add(e);		//e ...
-			
-		}
-		
-		this.appContext.add(context);	//[]
-		
-		for(B1Expr e: exprs2) {
-			this.appContext.add(e);		//... e
-			
-		}
+		this.appExprs1 = exprs1;
+		this.appContext = context;
+		this.appExprs2 = exprs2;
 		
 	}
 	
-	public Context(Context context, B1Expr expr1, B1Expr expr2, int intType) {
+	public Context(Context context, B1Expr expr1, B1Expr expr2, int ifType) {
 		this.contextType = ContextType.IF;
 		
-		switch(intType) {
-			case 0:	//(if [] e e)
-				this.ifContext[0] = context;
-				this.ifContext[1] = expr1;
-				this.ifContext[2] = expr2;
-				break;
-				
-			case 1:	//(if e [] e)
-				this.ifContext[1] = context;
-				this.ifContext[0] = expr1;
-				this.ifContext[2] = expr2;
-				break;
-				
-			case 2:	//(if e e [])
-				this.ifContext[2] = context;
-				this.ifContext[0] = expr1;
-				this.ifContext[1] = expr2;
-				break;
-				
-			default:
-				break;
-				
-		}
+		this.ifContext = context;
+		this.ifExpr1 = expr1;
+		this.ifExpr2 = expr2;
 		
 	}
 	
@@ -77,21 +53,40 @@ public class Context implements B1Expr{
 	public void setContextType(ContextType contextType) {
 		this.contextType = contextType;
 	}
+	
 
-	public B1Expr[] getIfContext() {
-		return ifContext;
+	public ArrayList<B1Expr> getAppExprs1() {
+		return appExprs1;
 	}
 
-	public void setIfContext(B1Expr[] ifContext) {
-		this.ifContext = ifContext;
-	}
-
-	public ArrayList<B1Expr> getAppContext() {
+	public Context getAppContext() {
 		return appContext;
 	}
 
-	public void setAppContext(ArrayList<B1Expr> appContext) {
-		this.appContext = appContext;
+	public ArrayList<B1Expr> getAppExprs2() {
+		return appExprs2;
+	}
+	
+	
+
+	public Context getIfContext() {
+		return ifContext;
+		
+	}
+
+	public B1Expr getIfExpr1() {
+		return ifExpr1;
+		
+	}
+
+	public B1Expr getIfExpr2() {
+		return ifExpr2;
+		
+	}
+
+	public int getIfType() {
+		return ifType;
+		
 	}
 
 	@Override
