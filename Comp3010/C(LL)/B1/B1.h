@@ -94,8 +94,13 @@ struct B1Con *newKIf(struct B1Expr *expr1, struct B1Expr *expr2, struct B1Con *k
 
 struct B1Con *newKApp(std::vector<B1Expr *> *values, std::vector<B1Expr *> *exprs, struct B1Con *k);
 
-int main(int argc, char**argv);
+struct B1Expr *ck0(struct B1Expr *expr);
 
+struct B1Expr *delta(struct B1Expr *op, std::vector<B1Expr *> *values);
+
+struct B1Con *copyK(struct B1Con *k);
+
+int main(int argc, char**argv);
 	
 #endif
 

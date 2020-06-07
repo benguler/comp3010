@@ -146,7 +146,7 @@ int interp(struct B1Expr *expr){
 					
 					return 0;
 					
-				}else if(strcmp(pType, "=") == 0){
+				}else if(strcmp(pType, ">") == 0){
 					if(interp(exprs->at(1)) > interp(exprs->at(2))){
 						return 1;
 						
@@ -222,3 +222,156 @@ struct B1Con *newKApp(std::vector<B1Expr *> *values, std::vector<B1Expr *> *expr
 	
 }
 
+struct B1Expr *ck0(struct B1Expr *expr){
+	struct B1Expr *e = expr;
+	
+	struct B1Con *k = newKRet();
+	
+	while(true){
+		switch(e->type){
+			case IF:
+				k = newKIf(e->data.b1if.expr2, e->data.b1if.expr3, copyK(k));
+				e = e->data.b1if.expr1;
+				break;
+				
+			case APP:
+				{
+					std::vector<B1Expr *> *empty = new std::vector<B1Expr *>;
+					std::vector<B1Expr *> es(e->data.b1app.exprs->begin()+1, e->data.b1app.exprs->end());
+					
+					std::vector<B1Expr *> *exprs = &es;
+					
+					k = newKApp(empty, exprs, copyK(k));
+					e = e->data.b1app.exprs->at(0);
+				}
+				break;
+			
+			case VAL:	
+				 switch(k->type){
+				 	case KRET:
+				 		return e;
+				 		
+				 	case KIF:
+				 		
+				 		if(e->data.b1val.b){
+				 			e = k->data.kif.expr1;
+				 			
+						}else{
+							e = k->data.kif.expr2;
+						 	
+						}
+				 		
+				 		k = k->data.kif.k;
+				 		
+				 		break;
+				 	
+				 	case KAPP:
+				 		{	 
+					 		if(k->data.kapp.exprs->size() == 0){
+					 			e = delta(e, k->data.kapp.values);
+					 			
+					 			k = k->data.kapp.k;
+					 			
+							 }else{
+							 	e = k->data.kapp.exprs->at(0);
+							 	
+								std::vector<B1Expr *> es(k->data.kapp.exprs->begin()+1, k->data.kapp.exprs->end());
+					
+								std::vector<B1Expr *> *exprs = &es;
+								
+								std::vector<B1Expr *> vs = *(k->data.kapp.values);
+								vs.insert(vs.begin(), e);
+								
+								std::vector<B1Expr *> *values = &vs;
+							 	
+							 	k = newKApp(values, exprs, k->data.kapp.k);
+							 	
+							}
+				 		}
+				 		break;
+				 	
+				 	default:
+				 		break;
+				 	
+				 }
+				 
+			default:
+				break;
+			
+		}
+		
+	}
+	
+}
+
+struct B1Expr *delta(struct B1Expr *op, std::vector<B1Expr *> *values){
+				
+		const char *pType = op->data.b1val.prim->data.b1prim.pType;
+		
+		int val1 = values->at(0)->data.b1val.n;
+		int val2 = values->at(1)->data.b1val.n;
+		
+		if(strcmp(pType, "+") == 0){
+			return newVal(val1 + val2);
+			
+		}else if(strcmp(pType, "*") == 0){
+			return newVal(val1 * val2);
+			
+		}else if(strcmp(pType, "/") == 0){
+			return newVal(val1 / val2);
+			
+		}else if(strcmp(pType, "-") == 0){
+			return newVal(val1 - val2);
+			
+		}else if(strcmp(pType, "<=") == 0){
+			if(val1 <= val2){
+				return newVal(true);
+				
+			}
+			
+			return newVal(false);
+			
+		}else if(strcmp(pType, "<") == 0){
+			if(val1 < val2){
+				return newVal(true);
+				
+			}
+			
+			return newVal(false);
+			
+		}else if(strcmp(pType, "=") == 0){
+			if(val1 == val2){
+				return newVal(true);
+				
+			}
+			
+			return newVal(false);
+			
+		}else if(strcmp(pType, ">") == 0){
+			if(val1 > val2){
+				return newVal(true);
+				
+			}
+			
+			return newVal(false);
+			
+		}else if(strcmp(pType, ">=") == 0){
+			if(val1 >= val2){
+				return newVal(true);
+				
+			}
+			
+			return newVal(false);
+			
+		}
+		
+		return 0;
+	
+}
+
+struct B1Con *copyK(struct B1Con *k){
+	struct B1Con con = *k;
+	
+	return &con;	
+	
+}
