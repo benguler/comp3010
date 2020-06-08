@@ -86,8 +86,6 @@ struct B1Expr *newVal(struct B1Expr *prim);
 
 struct B1Expr *newPrim(const char *pType);
 
-int interp(struct B1Expr *expr);
-
 struct B1Con *newKRet();
 
 struct B1Con *newKIf(struct B1Expr *expr1, struct B1Expr *expr2, struct B1Con *k);
@@ -96,9 +94,11 @@ struct B1Con *newKApp(std::vector<B1Expr *> *values, std::vector<B1Expr *> *expr
 
 struct B1Expr *ck0(struct B1Expr *expr);
 
-struct B1Expr *delta(struct B1Expr *op, std::vector<B1Expr *> *values);
+struct B1Expr *delta(struct B1Expr *e, std::vector<B1Expr *> *values);
 
 struct B1Con *copyK(struct B1Con *k);
+
+int valEval(struct B1Expr *expr);
 
 int main(int argc, char**argv);
 	

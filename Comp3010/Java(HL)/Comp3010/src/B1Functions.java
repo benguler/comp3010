@@ -223,7 +223,7 @@ public class B1Functions {
 		      myWriter.write("#include <iostream>\n#include \"B1.h\"\n\n");
 		      myWriter.write("int main( int argc, char** argv ) {\n");
 		      
-		      myWriter.write("	" + this.toC(expr) + ";\n\n");
+		      myWriter.write("	cout<<valEval(ck0(" + this.toC(expr) + "));\n\n");
 		      
 		      myWriter.write("	return 0;\n\n}");
 		      myWriter.close();
