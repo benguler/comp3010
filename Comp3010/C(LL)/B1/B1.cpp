@@ -157,14 +157,11 @@ struct B1Expr *ck0(struct B1Expr *expr){
 				break;
 			
 			case VAL:
-			cout<<"All Set 0"<<endl;	
 				 switch(k->type){
 				 	case KRET:
-				 		cout<<"All Set 1"<<endl;
 				 		return e;
 				 		
 				 	case KIF:
-				 		cout<<"All Set 2"<<endl;
 				 		if(e->data.b1val.b){
 				 			e = k->data.kif.expr1;
 				 			
@@ -178,15 +175,12 @@ struct B1Expr *ck0(struct B1Expr *expr){
 				 		break;
 				 	
 				 	case KAPP:
-				 		cout<<"All Set 3"<<endl;
 				 		{	 
 					 		if(k->data.kapp.exprs->size() == 0){
-					 			cout<<"All Set 4"<<endl;
 					 			e = delta(e, k->data.kapp.values);
 					 			k = k->data.kapp.k;
 					 			
 							 }else{
-							 	cout<<"All Set 5"<<endl;
 								std::vector<B1Expr *> *exprs = new std::vector<B1Expr *>;
 					
 								for(int i = 1; i < k->data.kapp.exprs->size(); i++){

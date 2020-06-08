@@ -132,6 +132,19 @@ class TestSuite {
 		
 		b1Functions.emit(if3.desugarB1());
 		
+		b1Functions.connectTestSuite(if1.desugarB1(), 
+									 if2.desugarB1(),
+									 if3.desugarB1(),
+									 app1.desugarB1(),
+									 app2.desugarB1(),
+									 app3.desugarB1(),
+									 app4.desugarB1(),
+									 app5.desugarB1(),
+									 app6.desugarB1(),
+									 app7.desugarB1(),
+									 app8.desugarB1(),
+									 app9.desugarB1());
+		
 	}
 
 }

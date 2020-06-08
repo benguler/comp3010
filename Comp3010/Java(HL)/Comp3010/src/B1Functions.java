@@ -223,9 +223,50 @@ public class B1Functions {
 		      myWriter.write("#include <iostream>\n#include \"B1.h\"\n\n");
 		      myWriter.write("int main( int argc, char** argv ) {\n");
 		      
-		      myWriter.write("	cout<<valEval(ck0(" + this.toC(expr) + "));\n\n");
+		      myWriter.write("	" + this.toC(expr) + ";\n\n");
 		      
 		      myWriter.write("	return 0;\n\n}");
+		      myWriter.close();
+		      
+		      System.out.println("Successfully wrote to the file.");
+		      
+		    } catch (IOException e) {
+		      System.out.println("An error occurred.");
+		      e.printStackTrace();
+		    }
+		
+	}
+
+
+
+	public void connectTestSuite(B1Expr... exprs) {
+		try {
+		      File myObj = new File("../../C(LL)/B1/main.cpp");
+		      if (myObj.createNewFile()) {
+		        System.out.println("File created: " + myObj.getName());
+		        
+		      } else {
+		        System.out.println("File already exists.");
+		        
+		      }
+		      
+		    } catch (IOException e) {
+		      System.out.println("An error occurred.");
+		      e.printStackTrace();
+		      
+		    }
+		
+		try {
+		      FileWriter myWriter = new FileWriter("../../C(LL)/B1/main.cpp");
+		      myWriter.write("#include <iostream>\n#include \"B1.h\"\n\n");
+		      myWriter.write("int main( int argc, char** argv ) {\n");
+		      
+		      for(B1Expr expr : exprs) {
+		    	  myWriter.write("	cout<<\"" +expr.pPrint() + " == \"<<valEval(ck0(" + this.toC(expr) + "))<<endl;\n");
+		    	  
+		      }
+		      
+		      myWriter.write("	\nreturn 0;\n\n}");
 		      myWriter.close();
 		      
 		      System.out.println("Successfully wrote to the file.");
