@@ -41,8 +41,8 @@ public class B1Functions {
 	}
 	
 	//Given an expression return a context and a redex
-	public B1Expr[] findRedex(B1Expr expr){
-		B1Expr[] pair = new B1Expr[2];	//[context, redex]
+	public Pair findRedex(B1Expr expr){
+		Pair pair = new Pair();	//[context, redex]
 		boolean hasRedEx = false;
 		
 		switch(expr.getExprType()) {
@@ -62,16 +62,16 @@ public class B1Functions {
 						default:	//If expr is not a val, it is reducible	(either an if or an app)
 							hasRedEx = true;
 							
-							pair[1] = ifExpr.getExpr(i);
+							pair.setE(ifExpr.getExpr(i));
 							
 							if(i == 0) {		//1st expr is reducible
-								pair[0] = new Context(new Context(), ifExpr.getExpr(1), ifExpr.getExpr(2), 0);
+								pair.setC(new Context(new Context(), ifExpr.getExpr(1), ifExpr.getExpr(2), 0));
 								
 							}else if(i == 1) {	//2nd expr is reducible
-								pair[0] = new Context(new Context(), ifExpr.getExpr(0), ifExpr.getExpr(2), 1);
+								pair.setC(new Context(new Context(), ifExpr.getExpr(0), ifExpr.getExpr(2), 1));
 								
 							}else {				//3rd expr is reducible
-								pair[0] = new Context(new Context(), ifExpr.getExpr(0), ifExpr.getExpr(1), 2);
+								pair.setC(new Context(new Context(), ifExpr.getExpr(0), ifExpr.getExpr(1), 2));
 								
 							}
 							
@@ -101,7 +101,7 @@ public class B1Functions {
 						break;
 					
 					default:	//If expr is not a val, it is reducible
-						pair[1] = appExprs.get(i);
+						pair.setE(appExprs.get(i));
 						
 						if(i != 0) {	//If there are exprs after redex
 							newExprs1 = new ArrayList<B1Expr>(appExprs.subList(0, i-1));	//exprs before redex
@@ -113,7 +113,7 @@ public class B1Functions {
 							
 						}
 						
-						pair[0] = new Context(newExprs1, new Context(), newExprs2);
+						pair.setC(new Context(newExprs1, new Context(), newExprs2));
 						
 						break;
 						
@@ -134,14 +134,14 @@ public class B1Functions {
 	
 	//Small step interpreter
 	public B1Expr smallStep(B1Expr expr) {
-		B1Expr[] pair = findRedex(expr);		//Find redex
+		Pair pair = findRedex(expr);		//Find redex
 		
 		if(pair == null) {						//If there is no redex in expr
 			return new B1Val(expr.interp());	//Return interpreted expr
 			
 		}	//else
 		
-		return smallStep(plug((Context)pair[0], smallStep(pair[1])));	//do step on redex, return expression after step
+		return smallStep(plug((Context)pair.getC(), smallStep(pair.getE())));	//do step on redex, return expression after step
 		
 	}
 	

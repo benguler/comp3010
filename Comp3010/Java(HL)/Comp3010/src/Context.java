@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Context implements B1Expr{
+public class Context{
 	
 	public enum ContextType{
 		EMPTY,
@@ -86,24 +86,6 @@ public class Context implements B1Expr{
 
 	public int getIfType() {
 		return ifType;
-		
-	}
-
-	@Override
-	public int interp() {		//Never call
-		return 0;
-		
-	}
-
-	@Override
-	public String pPrint() {	//Never call
-		return null;
-		
-	}
-
-	@Override
-	public ExprType getExprType() {
-		return ExprType.CON;
 		
 	}
 	

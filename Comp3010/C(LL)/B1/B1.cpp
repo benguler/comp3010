@@ -28,8 +28,6 @@ struct B1Expr *newApp(int n, ...){
 
 	expr->type = APP;
 
-	std::vector<B1Expr *> *exprs;
-
 	va_list args;
 
 	va_start(args, n);

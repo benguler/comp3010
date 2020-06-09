@@ -1,7 +1,7 @@
 
 public class B1Prim implements B1Expr {
 
-	String primType;	//+, *, -, /, <, <=, =, >, >=
+	private String primType;	//+, *, -, /, <, <=, =, >, >=
 	
 	public B1Prim(String primType) {
 		this.primType = primType;
