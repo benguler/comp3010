@@ -8,5 +8,16 @@ public class B2App implements B2Expr {
 		this.exprs = exprs;
 		
 	}
+
+	@Override
+	public ExprType getType() {
+		return ExprType.APP;
+		
+	}
+
+	public ArrayList<B2Expr> getExprs() {
+		return exprs;
+		
+	}
 	
 }

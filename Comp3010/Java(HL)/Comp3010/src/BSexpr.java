@@ -10,6 +10,12 @@ public interface BSexpr {
 	
 	public B1Expr desugarB1();
 	
+	public Pair desugarB2();
+	
+	public B2Expr desugarExprB2();
+	
+	public B2Def desugarDefB2();
+	
 	public type getType();
 	
 }

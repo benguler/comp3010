@@ -113,27 +113,25 @@ struct B2Expr *newFunc(const char *fName){
 	
 }
 
-struct B2Expr *newDef(int n, struct B2Expr *func, struct B2Expr *expr1, ...){
-	struct B2Expr *expr = (struct B2Expr *)malloc(sizeof(struct B2Expr));
+struct B2Def *newDef(int n, struct B2Expr *func, struct B2Expr *expr1, ...){
+	struct B2Def *def = (struct B2Def *)malloc(sizeof(struct B2Def));
 	
-	expr->type = DEF;
-	
-	expr->data.b2def.func = func;
-	expr->data.b2def.expr = expr1;
+	def->func = func;
+	def->expr = expr1;
 	
 	va_list args;
 
-	va_start(args, expr);
+	va_start(args, expr1);
 	
-	expr->data.b2def.vars = new std::vector<B2Expr *>; 
+	def->vars = new std::vector<B2Expr *>; 
 	
 	for(int i = 0; i<n; i++){
-		expr->data.b2def.vars->push_back(va_arg(args, struct B2Expr *));
+		def->vars->push_back(va_arg(args, struct B2Expr *));
 		
 	}
 	
 	va_end(args);
 
-	return expr;
+	return def;
 	
 }

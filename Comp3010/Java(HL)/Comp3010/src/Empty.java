@@ -23,4 +23,22 @@ public class Empty implements BSexpr{
 		
 	}
 
+	@Override
+	public Pair desugarB2() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public B2Expr desugarExprB2() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public B2Def desugarDefB2() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

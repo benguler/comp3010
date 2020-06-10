@@ -7,4 +7,14 @@ public class B2Var implements B2Expr {
 		
 	}
 
+	@Override
+	public ExprType getType() {
+		return ExprType.VAR;
+	}
+
+	public String getVarName() {
+		return varName;
+	}
+
+
 }

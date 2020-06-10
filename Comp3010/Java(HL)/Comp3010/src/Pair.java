@@ -3,6 +3,9 @@ public class Pair {
 	private Context c;
 	private B1Expr e;
 	
+	private B2Def def;
+	private B2Expr e1;
+	
 	public Pair() {
 		
 	}
@@ -10,6 +13,12 @@ public class Pair {
 	public Pair(Context c, B1Expr e) {
 		this.c =c;
 		this.e = e;
+		
+	}
+	
+	public Pair(B2Def def, B2Expr e1) {
+		this.def =def;
+		this.e1 = e1;
 		
 	}
 

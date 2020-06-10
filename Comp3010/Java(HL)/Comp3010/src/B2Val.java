@@ -1,3 +1,5 @@
+
+
 public class B2Val implements B2Expr {
 	public enum ValType{
 		NUM,
@@ -31,6 +33,28 @@ public class B2Val implements B2Expr {
 		valType = ValType.PRIM;
 		
 	}
+
+	@Override
+	public ExprType getType() {
+		return ExprType.VAL;
+	}
+
+	public int getNum() {
+		return num;
+	}
+
+	public boolean getBool() {
+		return bool;
+	}
+
+	public B2Prim getPrim() {
+		return prim;
+	}
+
+	public ValType getValType() {
+		return valType;
+	}
+	
 	
 	
 }

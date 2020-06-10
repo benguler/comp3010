@@ -11,7 +11,14 @@
 
 using namespace std;
 
-enum ExprType { IF, APP, VAL, PRIM, VAR, FUNC, DEF};
+enum ExprType { IF, APP, VAL, PRIM, VAR, FUNC};
+
+struct B2Def{
+	struct B2Expr *func;
+	std::vector<B2Expr *> *vars;
+	struct B2Expr *expr;
+	
+};
 
 struct B2Expr {
 	enum ExprType type;
@@ -52,13 +59,6 @@ struct B2Expr {
 			const char *fName;
 			
 		}b2func;
-			
-		struct{
-			struct B2Expr *func;
-			std::vector<B2Expr *> *vars;
-			struct B2Expr *expr;
-			
-		}b2def;
 		
 	} data;
 	
@@ -80,6 +80,6 @@ struct B2Expr *newVar(const char *vName);
 
 struct B2Expr *newFunc(const char *fName);
 
-struct B2Expr *newDef(struct B2Expr *func, struct B2Expr *expr, ...);
+struct B2Def *newDef(struct B2Expr *func, struct B2Expr *expr, ...);
 
 #endif

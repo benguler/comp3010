@@ -146,5 +146,16 @@ class TestSuite {
 									 app9.desugarB1());
 		
 	}
+	
+	//B2 Desugar Tests 
+	
+	Cons func1 = new Cons(new Atom("def"), new Cons(new Cons(new Atom("DOUBLE"), new Atom("x")),	//f1(x) = x + x
+											new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("x")))));
+	
+	Cons func2 = new Cons(new Atom("def"), new Cons(new Cons(new Atom("QUADRUPLE"), new Atom("y")),	//f2(x) = (x + x) + (x + x)
+											new Cons(new Atom("DOUBLE"), new Cons(new Atom ("DOUBLE"), new Atom("y")))));
+	
+	//Cons func3 = new Cons(new Atom("def"), new Cons(new Cons(new Atom("FIB"), new Atom("z")),
+											
 
 }

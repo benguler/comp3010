@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class B2Def implements B2Expr{
+public class B2Def{
 
 	private B2Func func;
 	private ArrayList<B2Var> vars;
@@ -11,6 +11,19 @@ public class B2Def implements B2Expr{
 		this.vars = vars;
 		this.expr = expr;
 		
+	}
+
+	public B2Func getFunc() {
+		return func;
+		
+	}
+
+	public ArrayList<B2Var> getVars() {
+		return vars;
+	}
+
+	public B2Expr getExpr() {
+		return expr;
 	}
 	
 }
