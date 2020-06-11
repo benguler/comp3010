@@ -179,7 +179,7 @@ struct VarMap *newVarMap(){
 	
 }
 
-struct B2Expr *ck0(struct B2Expr *expr){
+struct B2Expr *ck1(struct B2Expr *expr){
 	struct B2Expr *e = expr;
 	
 	struct B2Con *k = newKRet();
@@ -287,11 +287,11 @@ void plugVal(struct VarMap *varMap, struct B2Expr *var, struct B2Expr *val){
 	
 }
 
-struct B2Expr *delta(struct B2Expr *e, std::vector<B2Expr *> *values){
+struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values){
 		const char *pType = values->at(1)->data.b2val.prim->data.b2prim.pType;
 		
 		int val1 = values->at(0)->data.b2val.n;
-		int val2 = e->data.b2val.n;
+		int val2 = e0->data.b2val.n;
 
 		if(strcmp(pType, "+") == 0){
 			return newVal(val1 + val2);

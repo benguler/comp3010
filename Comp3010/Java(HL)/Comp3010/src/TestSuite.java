@@ -152,58 +152,72 @@ class TestSuite {
 		VarMap vm = new VarMap();
 		FuncMap fm = new FuncMap();
 		
-		Cons b2func1 = new Cons(new Atom("def"), new Cons(new Atom("DOUBLE"), new Cons(new Atom("x"),
+		Cons b2Func1 = new Cons(new Atom("def"), new Cons(new Atom("DOUBLE"), new Cons(new Atom("x"),
 								new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("x"))))));
 		
-		Cons b2func2 = new Cons(new Atom("def"), new Cons(new Atom("DIFFERENCE"), new Cons(new Cons(new Atom("x"), new Atom("y")),
+		Cons b2Func2 = new Cons(new Atom("def"), new Cons(new Atom("DIFFERENCE"), new Cons(new Cons(new Atom("x"), new Atom("y")),
 								new Cons(new Atom("if"), new Cons(new Cons(new Atom(">"), new Cons(new Atom("x"), new Atom("y"))),
 										new Cons(new Cons(new Atom("-"), new Cons(new Atom("x"), new Atom("y"))), 
 												 new Cons(new Atom("-"), new Cons(new Atom("y"), new Atom("x")))))))));
 		
-		Cons b2func3 = new Cons(new Atom("def"), new Cons(new Atom("RECUR"), new Cons(new Atom("r"), 
+		Cons b2Func3 = new Cons(new Atom("def"), new Cons(new Atom("RECUR"), new Cons(new Atom("r"), 
 			  	new Cons(new Atom("if"), new Cons(new Cons(new Atom("<="), new Cons(new Atom("r"), new Atom("6"))),
 			  			new Cons(new Atom("r"),
 			  					new Cons(new Atom("RECUR"), new Cons(new Atom("-"), new Cons(new Atom("r"), new Atom("1"))))))))));
 		
-		Cons b2func4 = new Cons(new Atom("def"), new Cons(new Atom("FIB"), new Cons(new Atom("n"), 
+		Cons b2Func4 = new Cons(new Atom("def"), new Cons(new Atom("FIB"), new Cons(new Atom("n"), 
 							  	new Cons(new Atom("if"), new Cons(new Cons(new Atom("<="), new Cons(new Atom("n"), new Atom("1"))),
 							  			new Cons(new Atom("n"),
 							  					 new Cons(new Atom("+"), new Cons(new Cons(new Atom("FIB"), new Cons(new Atom("-"), new Cons(new Atom("n"), new Atom("1")))),
 							  							 				 		  new Cons(new Atom("FIB"), new Cons(new Atom("-"), new Cons(new Atom("n"), new Atom("2"))))))))))));
 		
-		Cons b2func5 = new Cons(new Atom("def"), new Cons(new Atom("FIVE"), new Cons(new Empty(), new Atom("5"))));
+		Cons b2Func5 = new Cons(new Atom("def"), new Cons(new Atom("FIVE"), new Cons(new Empty(), new Atom("5"))));
 		
-		Cons b2func6 = new Cons(new Atom("def"), new Cons(new Atom("QUADRUPLE"), new Cons(new Atom("q"),
+		Cons b2Func6 = new Cons(new Atom("def"), new Cons(new Atom("QUADRUPLE"), new Cons(new Atom("q"),
 				new Cons(new Atom("DOUBLE"), new Cons(new Atom("DOUBLE"), new Atom("q"))))));
 		
+		Cons b2Func7 = new Cons(new Atom("def"), new Cons(new Atom("UNTILNI"), new Cons(new Atom("x"),
+								new Cons(new Atom("if"), new Cons(new Cons(new Atom("<"), new Cons(new Atom("x"), new Atom("0"))),
+										new Cons(new Atom("x"), new Cons(new Atom("UNTILNII"),new Cons(new Atom("-"), new Cons(new Atom("x"), new Atom("1"))))))))));
+		
+		Cons b2Func8 = new Cons(new Atom("def"), new Cons(new Atom("UNTILNII"), new Cons(new Atom("x"),
+				new Cons(new Atom("if"), new Cons(new Cons(new Atom("<"), new Cons(new Atom("x"), new Atom("0"))),
+						new Cons(new Atom("x"), new Cons(new Atom("UNTILNI"), new Cons(new Atom("-"), new Cons(new Atom("x"), new Atom("1"))))))))));
+		
 	
-		b2.define(b2func1.desugarB2Def(), fm);
-		b2.define(b2func2.desugarB2Def(), fm);
-		b2.define(b2func3.desugarB2Def(), fm);
-		b2.define(b2func4.desugarB2Def(), fm);
-		b2.define(b2func5.desugarB2Def(), fm);
-		b2.define(b2func6.desugarB2Def(), fm);
+		b2.define(b2Func1.desugarB2Def(), fm);
+		b2.define(b2Func2.desugarB2Def(), fm);
+		b2.define(b2Func3.desugarB2Def(), fm);
+		b2.define(b2Func4.desugarB2Def(), fm);
+		b2.define(b2Func5.desugarB2Def(), fm);
+		b2.define(b2Func6.desugarB2Def(), fm);
+		b2.define(b2Func7.desugarB2Def(), fm);
+		b2.define(b2Func8.desugarB2Def(), fm);
 		
-		//Cons b2App1 = new Cons(new Atom("DOUBLE"), new Cons(new Atom("+"), new Cons(new Atom("1"), new Atom("1"))));
-		//Cons b2App2 = new Cons(new Atom("DIFFERENCE"), new Cons(new Atom("8"), new Atom("3")));
-		//Cons b2App3 = new Cons(new Atom("RECUR"), new Atom("13"));
-		//Cons b2App4 = new Cons(new Atom("FIB"), new Atom("2"));
-		//Cons b2App5 = new Cons(new Atom("FIVE"), new Empty());
-		//Cons b2App6 = new Cons(new Atom("QUADRUPLE"), new Atom("2"));
+		Cons b2App1 = new Cons(new Atom("DOUBLE"), new Cons(new Atom("+"), new Cons(new Atom("1"), new Atom("1"))));
+		Cons b2App2 = new Cons(new Atom("DIFFERENCE"), new Cons(new Atom("8"), new Atom("3")));
+		Cons b2App3 = new Cons(new Atom("RECUR"), new Atom("13"));
+		Cons b2App4 = new Cons(new Atom("FIB"), new Atom("4"));
+		Cons b2App5 = new Cons(new Atom("FIVE"), new Empty());
+		Cons b2App6 = new Cons(new Atom("QUADRUPLE"), new Atom("2"));
+		Cons b2App7 = new Cons(new Atom("UNTILNI"), new Atom("2"));
+		Cons b2App8 = new Cons(new Atom("UNTILNI"), new Atom("7"));
 		
-		Cons b2App1 = new Cons(new Atom("FIB"), new Atom("0"));
-		Cons b2App2 = new Cons(new Atom("FIB"), new Atom("1"));
-		Cons b2App3 = new Cons(new Atom("FIB"), new Atom("2"));
-		Cons b2App4 = new Cons(new Atom("FIB"), new Atom("3"));
-		Cons b2App5 = new Cons(new Atom("FIB"), new Atom("4"));
-		Cons b2App6 = new Cons(new Atom("FIB"), new Atom("5"));
+		//Cons b2App1 = new Cons(new Atom("FIB"), new Atom("0"));
+		//Cons b2App2 = new Cons(new Atom("FIB"), new Atom("1"));
+		//Cons b2App3 = new Cons(new Atom("FIB"), new Atom("2"));
+		//Cons b2App4 = new Cons(new Atom("FIB"), new Atom("3"));
+		//Cons b2App5 = new Cons(new Atom("FIB"), new Atom("4"));
+		//Cons b2App6 = new Cons(new Atom("FIB"), new Atom("5"));
 		
-		System.out.println(b2.bigStep(b2App1.desugarB2Expr(), vm, fm));
-		System.out.println(b2.bigStep(b2App2.desugarB2Expr(), vm, fm));
-		System.out.println(b2.bigStep(b2App3.desugarB2Expr(), vm, fm));
-		System.out.println(b2.bigStep(b2App4.desugarB2Expr(), vm, fm));
-		System.out.println(b2.bigStep(b2App5.desugarB2Expr(), vm, fm));
-		System.out.println(b2.bigStep(b2App6.desugarB2Expr(), vm, fm));
+		assertEquals(b2.bigStep(b2App1.desugarB2Expr(), vm, fm), 4, "DOUBLE");
+		assertEquals(b2.bigStep(b2App2.desugarB2Expr(), vm, fm), 5, "DIFFERENCE");
+		assertEquals(b2.bigStep(b2App3.desugarB2Expr(), vm, fm), 6, "RECUR");
+		assertEquals(b2.bigStep(b2App4.desugarB2Expr(), vm, fm), 2, "FIB");
+		assertEquals(b2.bigStep(b2App5.desugarB2Expr(), vm, fm), 5, "FIVE");
+		assertEquals(b2.bigStep(b2App6.desugarB2Expr(), vm, fm), 8, "QUADRUPBLE");
+		assertEquals(b2.bigStep(b2App7.desugarB2Expr(), vm, fm), -1, "UNTILNI");
+		assertEquals(b2.bigStep(b2App8.desugarB2Expr(), vm, fm), -1, "UNTILNII");
 		
 	}
 
