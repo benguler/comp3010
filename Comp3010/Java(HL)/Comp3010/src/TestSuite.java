@@ -85,77 +85,126 @@ class TestSuite {
 		
 		//B1 Desugar Tests 
 		
-		Cons if1 = new Cons(new Atom("if"), new Cons(new Atom("true"), 
+		Cons b1if1 = new Cons(new Atom("if"), new Cons(new Atom("true"), 
 							new Cons(new Atom("1"), new Atom("2"))));	//If true == true then 1, else 2
 		
-		Cons if2 = new Cons(new Atom("if"), new Cons(new Atom("false"), 
+		Cons b1if2 = new Cons(new Atom("if"), new Cons(new Atom("false"), 
 				   		 	new Cons(new Atom("1"), new Atom("2"))));	//If false == true then 1, else 2
 		
-		Cons if3 = new Cons(new Atom("if"), new Cons(new Cons(new Atom("<"), new Cons(new Atom("1"), new Atom("2"))), 
+		Cons b1if3 = new Cons(new Atom("if"), new Cons(new Cons(new Atom("<"), new Cons(new Atom("1"), new Atom("2"))), 
 				   			new Cons(new Atom("1"), new Atom("2"))));	//If 1 < 2 then 1, else 2
 		
-		Cons app1 = new Cons(new Atom("+"), new Cons(new Atom("1"), new Atom("1")));	//1 + 1 = 2
-		Cons app2 = new Cons(new Atom("*"), new Cons(new Atom("2"), new Atom("2")));	//2 * 2 = 4
-		Cons app3 = new Cons(new Atom("-"), new Cons(new Atom("2"), new Atom("1")));	//2 - 1 = 1
-		Cons app4 = new Cons(new Atom("/"), new Cons(new Atom("4"), new Atom("2")));	//4 / 2 = 2
-		Cons app5 = new Cons(new Atom("<"), new Cons(new Atom("3"), new Atom("2")));	//3 < 2 = 0  (false)
-		Cons app6 = new Cons(new Atom("<="), new Cons(new Atom("3"), new Atom("3")));	//3 <= 3 = 1 (true)
-		Cons app7 = new Cons(new Atom("="), new Cons(new Atom("3"), new Atom("3")));	//3 == 3 = 1 (true)
-		Cons app8 = new Cons(new Atom(">"), new Cons(new Atom("3"), new Atom("2")));	//3 > 2 = 1  (true)
-		Cons app9 = new Cons(new Atom(">="), new Cons(new Atom("3"), new Atom("5")));	//3 >= 5 = 0 (false)
+		Cons b1App1 = new Cons(new Atom("+"), new Cons(new Atom("1"), new Atom("1")));	//1 + 1 = 2
+		Cons b1App2 = new Cons(new Atom("*"), new Cons(new Atom("2"), new Atom("2")));	//2 * 2 = 4
+		Cons b1App3 = new Cons(new Atom("-"), new Cons(new Atom("2"), new Atom("1")));	//2 - 1 = 1
+		Cons b1App4 = new Cons(new Atom("/"), new Cons(new Atom("4"), new Atom("2")));	//4 / 2 = 2
+		Cons b1App5 = new Cons(new Atom("<"), new Cons(new Atom("3"), new Atom("2")));	//3 < 2 = 0  (false)
+		Cons b1App6 = new Cons(new Atom("<="), new Cons(new Atom("3"), new Atom("3")));	//3 <= 3 = 1 (true)
+		Cons b1App7 = new Cons(new Atom("="), new Cons(new Atom("3"), new Atom("3")));	//3 == 3 = 1 (true)
+		Cons b1App8 = new Cons(new Atom(">"), new Cons(new Atom("3"), new Atom("2")));	//3 > 2 = 1  (true)
+		Cons b1App9 = new Cons(new Atom(">="), new Cons(new Atom("3"), new Atom("5")));	//3 >= 5 = 0 (false)
 		
 		
-		assertEquals(if1.desugarB1().interp(), 1 ," != 1");
-		assertEquals(if2.desugarB1().interp(), 2 ," != 2");
-		assertEquals(if3.desugarB1().interp(), 1 ," != 1");
-		assertEquals(app1.desugarB1().interp(), 2 ," != 2");
-		assertEquals(app2.desugarB1().interp(), 4 ," != 4");
-		assertEquals(app3.desugarB1().interp(), 1 ," != 1");
-		assertEquals(app4.desugarB1().interp(), 2 ," != 2");
-		assertEquals(app5.desugarB1().interp(), 0 ," != 0");
-		assertEquals(app6.desugarB1().interp(), 1 ," != 1");
-		assertEquals(app7.desugarB1().interp(), 1 ," != 1");
-		assertEquals(app8.desugarB1().interp(), 1 ," != 1");
-		assertEquals(app9.desugarB1().interp(), 0 ," != 0");
+		assertEquals(b1if1.desugarB1().interp(), 1 ," != 1");
+		assertEquals(b1if2.desugarB1().interp(), 2 ," != 2");
+		assertEquals(b1if3.desugarB1().interp(), 1 ," != 1");
+		assertEquals(b1App1.desugarB1().interp(), 2 ," != 2");
+		assertEquals(b1App2.desugarB1().interp(), 4 ," != 4");
+		assertEquals(b1App3.desugarB1().interp(), 1 ," != 1");
+		assertEquals(b1App4.desugarB1().interp(), 2 ," != 2");
+		assertEquals(b1App5.desugarB1().interp(), 0 ," != 0");
+		assertEquals(b1App6.desugarB1().interp(), 1 ," != 1");
+		assertEquals(b1App7.desugarB1().interp(), 1 ," != 1");
+		assertEquals(b1App8.desugarB1().interp(), 1 ," != 1");
+		assertEquals(b1App9.desugarB1().interp(), 0 ," != 0");
 		
-		System.out.println(if3.desugarB1().pPrint());
+		System.out.println(b1if3.desugarB1().pPrint());
 		
 		B1Functions b1Functions = new B1Functions();
 		
 		//Small-Step Tests
 		
-		assertEquals(if3.desugarB1().interp(), b1Functions.smallStep(if3.desugarB1()).interp() ," !!! ");
+		assertEquals(b1if3.desugarB1().interp(), b1Functions.smallStep(b1if3.desugarB1()).interp() ," !!! ");
 		
-		System.out.println(if3.desugarB1().pPrint() + " == " + b1Functions.smallStep(if3.desugarB1()).pPrint());
+		System.out.println(b1if3.desugarB1().pPrint() + " == " + b1Functions.smallStep(b1if3.desugarB1()).pPrint());
 		
 		//emit tests
 		
-		b1Functions.emit(if3.desugarB1());
+		b1Functions.emit(b1if3.desugarB1());
 		
-		b1Functions.connectTestSuite(if1.desugarB1(), 
-									 if2.desugarB1(),
-									 if3.desugarB1(),
-									 app1.desugarB1(),
-									 app2.desugarB1(),
-									 app3.desugarB1(),
-									 app4.desugarB1(),
-									 app5.desugarB1(),
-									 app6.desugarB1(),
-									 app7.desugarB1(),
-									 app8.desugarB1(),
-									 app9.desugarB1());
+		b1Functions.connectTestSuite(b1if1.desugarB1(), 
+									 b1if2.desugarB1(),
+									 b1if3.desugarB1(),
+									 b1App1.desugarB1(),
+									 b1App2.desugarB1(),
+									 b1App3.desugarB1(),
+									 b1App4.desugarB1(),
+									 b1App5.desugarB1(),
+									 b1App6.desugarB1(),
+									 b1App7.desugarB1(),
+									 b1App8.desugarB1(),
+									 b1App9.desugarB1());
+	
+		//B2 Desugar Tests 
+		
+		B2Functions b2 = new B2Functions();
+		
+		VarMap vm = new VarMap();
+		FuncMap fm = new FuncMap();
+		
+		Cons b2func1 = new Cons(new Atom("def"), new Cons(new Atom("DOUBLE"), new Cons(new Atom("x"),
+								new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("x"))))));
+		
+		Cons b2func2 = new Cons(new Atom("def"), new Cons(new Atom("DIFFERENCE"), new Cons(new Cons(new Atom("x"), new Atom("y")),
+								new Cons(new Atom("if"), new Cons(new Cons(new Atom(">"), new Cons(new Atom("x"), new Atom("y"))),
+										new Cons(new Cons(new Atom("-"), new Cons(new Atom("x"), new Atom("y"))), 
+												 new Cons(new Atom("-"), new Cons(new Atom("y"), new Atom("x")))))))));
+		
+		Cons b2func3 = new Cons(new Atom("def"), new Cons(new Atom("RECUR"), new Cons(new Atom("r"), 
+			  	new Cons(new Atom("if"), new Cons(new Cons(new Atom("<="), new Cons(new Atom("r"), new Atom("6"))),
+			  			new Cons(new Atom("r"),
+			  					new Cons(new Atom("RECUR"), new Cons(new Atom("-"), new Cons(new Atom("r"), new Atom("1"))))))))));
+		
+		Cons b2func4 = new Cons(new Atom("def"), new Cons(new Atom("FIB"), new Cons(new Atom("n"), 
+							  	new Cons(new Atom("if"), new Cons(new Cons(new Atom("<="), new Cons(new Atom("n"), new Atom("1"))),
+							  			new Cons(new Atom("n"),
+							  					 new Cons(new Atom("+"), new Cons(new Cons(new Atom("FIB"), new Cons(new Atom("-"), new Cons(new Atom("n"), new Atom("1")))),
+							  							 				 		  new Cons(new Atom("FIB"), new Cons(new Atom("-"), new Cons(new Atom("n"), new Atom("2"))))))))))));
+		
+		Cons b2func5 = new Cons(new Atom("def"), new Cons(new Atom("FIVE"), new Cons(new Empty(), new Atom("5"))));
+		
+		Cons b2func6 = new Cons(new Atom("def"), new Cons(new Atom("QUADRUPLE"), new Cons(new Atom("q"),
+				new Cons(new Atom("DOUBLE"), new Cons(new Atom("DOUBLE"), new Atom("q"))))));
+		
+	
+		b2.define(b2func1.desugarB2Def(), fm);
+		b2.define(b2func2.desugarB2Def(), fm);
+		b2.define(b2func3.desugarB2Def(), fm);
+		b2.define(b2func4.desugarB2Def(), fm);
+		b2.define(b2func5.desugarB2Def(), fm);
+		b2.define(b2func6.desugarB2Def(), fm);
+		
+		//Cons b2App1 = new Cons(new Atom("DOUBLE"), new Cons(new Atom("+"), new Cons(new Atom("1"), new Atom("1"))));
+		//Cons b2App2 = new Cons(new Atom("DIFFERENCE"), new Cons(new Atom("8"), new Atom("3")));
+		//Cons b2App3 = new Cons(new Atom("RECUR"), new Atom("13"));
+		//Cons b2App4 = new Cons(new Atom("FIB"), new Atom("2"));
+		//Cons b2App5 = new Cons(new Atom("FIVE"), new Empty());
+		//Cons b2App6 = new Cons(new Atom("QUADRUPLE"), new Atom("2"));
+		
+		Cons b2App1 = new Cons(new Atom("FIB"), new Atom("0"));
+		Cons b2App2 = new Cons(new Atom("FIB"), new Atom("1"));
+		Cons b2App3 = new Cons(new Atom("FIB"), new Atom("2"));
+		Cons b2App4 = new Cons(new Atom("FIB"), new Atom("3"));
+		Cons b2App5 = new Cons(new Atom("FIB"), new Atom("4"));
+		Cons b2App6 = new Cons(new Atom("FIB"), new Atom("5"));
+		
+		System.out.println(b2.bigStep(b2App1.desugarB2Expr(), vm, fm));
+		System.out.println(b2.bigStep(b2App2.desugarB2Expr(), vm, fm));
+		System.out.println(b2.bigStep(b2App3.desugarB2Expr(), vm, fm));
+		System.out.println(b2.bigStep(b2App4.desugarB2Expr(), vm, fm));
+		System.out.println(b2.bigStep(b2App5.desugarB2Expr(), vm, fm));
+		System.out.println(b2.bigStep(b2App6.desugarB2Expr(), vm, fm));
 		
 	}
-	
-	//B2 Desugar Tests 
-	
-	Cons func1 = new Cons(new Atom("def"), new Cons(new Cons(new Atom("DOUBLE"), new Atom("x")),	//f1(x) = x + x
-											new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("x")))));
-	
-	Cons func2 = new Cons(new Atom("def"), new Cons(new Cons(new Atom("QUADRUPLE"), new Atom("y")),	//f2(x) = (x + x) + (x + x)
-											new Cons(new Atom("DOUBLE"), new Cons(new Atom ("DOUBLE"), new Atom("y")))));
-	
-	//Cons func3 = new Cons(new Atom("def"), new Cons(new Cons(new Atom("FIB"), new Atom("z")),
-											
 
 }

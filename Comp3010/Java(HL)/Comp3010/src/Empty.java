@@ -13,7 +13,7 @@ public class Empty implements BSexpr{
 
 	@Override
 	public type getType() {
-		return type.Empty;
+		return type.EMPTY;
 		
 	}
 
@@ -30,13 +30,13 @@ public class Empty implements BSexpr{
 	}
 
 	@Override
-	public B2Expr desugarExprB2() {
+	public B2Expr desugarB2Expr() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public B2Def desugarDefB2() {
+	public B2Def desugarB2Def() {
 		// TODO Auto-generated method stub
 		return null;
 	}

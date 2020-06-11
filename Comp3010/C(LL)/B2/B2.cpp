@@ -135,3 +135,231 @@ struct B2Def *newDef(int n, struct B2Expr *func, struct B2Expr *expr1, ...){
 	return def;
 	
 }
+
+struct B2Con *newKRet(){
+	struct B2Con *con = (struct B2Con *)malloc(sizeof(struct B2Con));
+	
+	con->type = KRET;
+	
+	return con;
+	
+}
+
+struct B2Con *newKIf(struct B2Expr *expr1, struct B2Expr *expr2, struct B2Con *k){
+	struct B2Con *con = (struct B2Con *)malloc(sizeof(struct B2Con));
+	
+	con->type = KIF;
+	
+	con->data.kif.expr1 = expr1;
+	con->data.kif.expr2 = expr2;
+	con->data.kif.k = k;
+	
+	return con;
+	
+}
+
+struct B2Con *newKApp(std::vector<B2Expr *> *values, std::vector<B2Expr *> *exprs, struct B2Con *k){
+	struct B2Con *con = (struct B2Con *)malloc(sizeof(struct B2Con));
+	
+	con->type = KAPP;
+	
+	con->data.kapp.values = values;
+	con->data.kapp.exprs = exprs;
+	con->data.kapp.k = k;
+	
+	return con;
+	
+}
+
+struct B2Expr *ck1(struct B2Expr *expr){
+	struct B2Expr *e = expr;
+	
+	struct B2Con *k = newKRet();
+	
+	while(true){
+		switch(e->type){
+			case IF:
+				k = newKIf(e->data.B2if.expr2, e->data.B2if.expr3, copyK(k));
+				e = e->data.B2if.expr1;
+				break;
+				
+			case APP:
+				{
+					std::vector<B2Expr *> *values = new std::vector<B2Expr *>;
+					
+					std::vector<B2Expr *> *exprs = new std::vector<B2Expr *>;
+					
+					for(int i = 1; i < e->data.B2app.exprs->size(); i++){
+						exprs->push_back(e->data.B2app.exprs->at(i));
+						
+					}
+					
+					k = newKApp(values, exprs, copyK(k));
+					e = e->data.B2app.exprs->at(0);
+				}
+				break;
+			
+			case VAL:
+				 switch(k->type){
+				 	case KRET:
+				 		return e;
+				 		
+				 	case KIF:
+				 		if(e->data.B2val.b){
+				 			e = k->data.kif.expr1;
+				 			
+						}else{
+							e = k->data.kif.expr2;
+						 	
+						}
+				 		
+				 		k = k->data.kif.k;
+				 		
+				 		break;
+				 	
+				 	case KAPP:
+				 		{	 
+					 		if(k->data.kapp.exprs->size() == 0){
+					 			e = delta(e, k->data.kapp.values);
+					 			k = k->data.kapp.k;
+					 			
+							 }else{
+								std::vector<B2Expr *> *exprs = new std::vector<B2Expr *>;
+					
+								for(int i = 1; i < k->data.kapp.exprs->size(); i++){
+									exprs->push_back(k->data.kapp.exprs->at(i));
+									
+								}
+								
+								std::vector<B2Expr *> *values = new std::vector<B2Expr *>;
+								
+								values->push_back(e);
+								
+								for(int i = 0; i < k->data.kapp.values->size(); i++){
+									values->push_back(k->data.kapp.values->at(i));
+									
+								}
+							 	
+							 	e = k->data.kapp.exprs->at(0);
+							 	k = newKApp(values, exprs, k->data.kapp.k);
+							 	
+							}
+							
+				 		}
+				 		
+				 		break;
+				 	
+				 	default:
+				 		break;
+				 	
+				 }
+				 
+			default:
+				break;
+			
+		}
+		
+	}
+	
+}
+
+struct B2Expr *delta(struct B2Expr *e, std::vector<B2Expr *> *values){
+		const char *pType = values->at(1)->data.B2val.prim->data.B2prim.pType;
+		
+		int val1 = values->at(0)->data.B2val.n;
+		int val2 = e->data.B2val.n;
+
+		if(strcmp(pType, "+") == 0){
+			return newVal(val1 + val2);
+			
+		}else if(strcmp(pType, "*") == 0){
+			return newVal(val1 * val2);
+			
+		}else if(strcmp(pType, "/") == 0){
+			return newVal(val1 / val2);
+			
+		}else if(strcmp(pType, "-") == 0){
+			return newVal(val1 - val2);
+			
+		}else if(strcmp(pType, "<=") == 0){
+			if(val1 <= val2){
+				return newVal(true);
+				
+			}
+			
+			return newVal(false);
+			
+		}else if(strcmp(pType, "<") == 0){
+			if(val1 < val2){
+				return newVal(true);
+				
+			}
+			
+			return newVal(false);
+			
+		}else if(strcmp(pType, "=") == 0){
+			if(val1 == val2){
+				return newVal(true);
+				
+			}
+			
+			return newVal(false);
+			
+		}else if(strcmp(pType, ">") == 0){
+			if(val1 > val2){
+				return newVal(true);
+				
+			}
+			
+			return newVal(false);
+			
+		}else if(strcmp(pType, ">=") == 0){
+			if(val1 >= val2){
+				return newVal(true);
+				
+			}
+			
+			return newVal(false);
+			
+		}
+		
+		return 0;
+	
+}
+
+struct B2Con *copyK(struct B2Con *k){
+	struct B2Con *con = (struct B2Con *)malloc(sizeof(struct B2Con));
+	
+	con->type = k->type;
+	
+	switch(k->type){
+		case KIF:
+			con->data.kif.expr1 = k->data.kif.expr1;
+			con->data.kif.expr2 = k->data.kif.expr2;
+			con->data.kif.k = k->data.kif.k;
+			break;
+			
+		case KAPP:
+			con->data.kapp.exprs = k->data.kapp.exprs;
+			con->data.kapp.values = k->data.kapp.values;
+			con->data.kapp.k = k->data.kapp.k;
+			break;
+		
+	}
+	
+	return con;	
+	
+}
+
+int valEval(struct B2Expr *expr){
+	if(!expr->data.B2val.isBool){
+		return expr->data.B2val.n;
+		
+	}else if(expr->data.B2val.b){
+		return 1;
+		
+	}
+	
+	return 0;
+	
+}

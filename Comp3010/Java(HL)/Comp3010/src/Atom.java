@@ -24,7 +24,7 @@ public class Atom implements BSexpr{
 
 	@Override
 	public type getType() {
-		return type.Atom;
+		return type.ATOM;
 		
 	}
 
@@ -62,7 +62,7 @@ public class Atom implements BSexpr{
 	}
 
 	@Override
-	public B2Expr desugarExprB2() {
+	public B2Expr desugarB2Expr() {
 		try { 												//If atom contains an integer
 	        return new B2Val(Integer.parseInt(atom));
 	       
@@ -103,7 +103,7 @@ public class Atom implements BSexpr{
 	}
 
 	@Override
-	public B2Def desugarDefB2() {
+	public B2Def desugarB2Def() {
 		// TODO Auto-generated method stub
 		return null;
 	}

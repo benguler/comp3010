@@ -22,7 +22,12 @@ public class B2Functions {
 			case APP:		
 				B2App appExpr = (B2App) expr;
 				
-				ArrayList<B2Expr> dExprs = new ArrayList<B2Expr>(appExpr.getExprs().subList(1, appExpr.getExprs().size()-1));
+				ArrayList<B2Expr> dExprs = new ArrayList<B2Expr>();
+				
+				for (int i = 1; i < appExpr.getExprs().size(); i++) {
+					dExprs.add(appExpr.getExprs().get(i));
+					
+				}
 				
 				return delta(appExpr.getExprs().get(0), dExprs, vm, fm);
 				
@@ -44,7 +49,11 @@ public class B2Functions {
 			case VAR:
 				B2Var varExpr = (B2Var) expr;
 				
-				return bigStep(vm.getVal(varExpr), vm, fm);
+				int step = bigStep(vm.getVal(varExpr), vm, fm);
+				
+				//vm.removeVal(varExpr);
+				
+				return step;
 				
 			default:
 				break;
@@ -60,7 +69,6 @@ public class B2Functions {
 		
 	}
 	
-	@SuppressWarnings("null")
 	public int delta(B2Expr op, ArrayList<B2Expr> exprs, VarMap vm, FuncMap fm) {
 		
 		switch(op.getType()) {
@@ -115,7 +123,7 @@ public class B2Functions {
 						return 0;
 		
 					default:
-						return (Integer) null;	//Error
+						return 0;	//Error
 						
 				}
 				
@@ -126,7 +134,7 @@ public class B2Functions {
 				B2Def def = fm.getDef(funcExpr);
 				
 				for(int i = 0; i < exprs.size(); i ++) {
-					vm.setVar(def.getVars().get(i), exprs.get(i));
+					vm.setVar(def.getVars().get(i), new B2Val(bigStep(exprs.get(i), vm, fm)));
 					
 				}
 				

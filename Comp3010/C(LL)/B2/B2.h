@@ -20,6 +20,8 @@ struct B2Def{
 	
 };
 
+
+
 struct B2Expr {
 	enum ExprType type;
 	
@@ -64,6 +66,34 @@ struct B2Expr {
 	
 };
 
+enum KType {KRET, KIF, KAPP};
+
+struct B2Con {
+	enum KType type;
+	
+	union{
+		struct {
+			
+		} kret;
+		
+		struct {
+			struct B2Expr *expr1;
+			struct B2Expr *expr2;
+			struct B2Con *k;
+			
+		} kif;
+		
+		struct {
+			std::vector<B2Expr *> *values;
+			std::vector<B2Expr *> *exprs;
+			struct B2Con *k;
+			
+		} kapp;
+		
+	} data;
+	
+};
+
 struct B2Expr *newIf(struct B2Expr *expr1, struct B2Expr *expr2, struct B2Expr *expr3);
 
 struct B2Expr *newApp(int n, ...);
@@ -81,5 +111,19 @@ struct B2Expr *newVar(const char *vName);
 struct B2Expr *newFunc(const char *fName);
 
 struct B2Def *newDef(struct B2Expr *func, struct B2Expr *expr, ...);
+
+struct B1Con *newKIf(struct B2Expr *expr1, struct B2Expr *expr2, struct B2Con *k);
+
+struct B2Con *newKApp(std::vector<B2Expr *> *values, std::vector<B2Expr *> *exprs, struct B2Con *k);
+
+struct B2Expr *ck1(struct B2Expr *expr);
+
+struct B2Expr *delta(struct B2Expr *e, std::vector<B2Expr *> *values);
+
+struct B2Con *copyK(struct B2Con *k);
+
+int valEval(struct B2Expr *expr);
+
+int main(int argc, char**argv);
 
 #endif
