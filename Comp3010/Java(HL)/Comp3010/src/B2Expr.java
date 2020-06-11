@@ -1,7 +1,6 @@
 
 public interface B2Expr {
 	public enum ExprType{
-		DEF,
 		IF,
 		APP,
 		VAL,

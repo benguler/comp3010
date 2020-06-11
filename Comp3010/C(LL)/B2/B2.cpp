@@ -198,7 +198,7 @@ struct FuncMap *newFuncMap(){
 	
 }
 
-struct B2Expr *ck1(struct B2Expr *expr, struct VarMap, struct FuncMap *fm){
+struct B2Expr *ck1(struct B2Expr *expr, struct FuncMap *fm){
 	struct B2Expr *e = expr;
 	
 	struct B2Con *k = newKRet();
@@ -250,6 +250,8 @@ struct B2Expr *ck1(struct B2Expr *expr, struct VarMap, struct FuncMap *fm){
 					 			
 					 			switch(k->data.kapp.values->at(0)->type){
 								 	case FUNC:
+								 		e = delta(e, k->data.kapp.values, 1, fm);
+						 				k = k->data.kapp.k;
 								 		break;
 								 		
 								 	default:
