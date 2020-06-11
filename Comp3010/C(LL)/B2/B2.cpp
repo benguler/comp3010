@@ -171,7 +171,15 @@ struct B2Con *newKApp(std::vector<B2Expr *> *values, std::vector<B2Expr *> *expr
 	
 }
 
-struct B2Expr *ck1(struct B2Expr *expr){
+struct VarMap *newVarMap(){
+	struct VarMap *vm = (struct VarMap *)malloc(sizeof(struct VarMap));
+	
+	vm->keys = new std::vector<const char *>;
+	vm->values = new std::vector<struct B2Expr *>; 
+	
+}
+
+struct B2Expr *ck0(struct B2Expr *expr){
 	struct B2Expr *e = expr;
 	
 	struct B2Con *k = newKRet();
@@ -179,8 +187,8 @@ struct B2Expr *ck1(struct B2Expr *expr){
 	while(true){
 		switch(e->type){
 			case IF:
-				k = newKIf(e->data.B2if.expr2, e->data.B2if.expr3, copyK(k));
-				e = e->data.B2if.expr1;
+				k = newKIf(e->data.b2if.expr2, e->data.b2if.expr3, copyK(k));
+				e = e->data.b2if.expr1;
 				break;
 				
 			case APP:
@@ -189,13 +197,13 @@ struct B2Expr *ck1(struct B2Expr *expr){
 					
 					std::vector<B2Expr *> *exprs = new std::vector<B2Expr *>;
 					
-					for(int i = 1; i < e->data.B2app.exprs->size(); i++){
-						exprs->push_back(e->data.B2app.exprs->at(i));
+					for(int i = 1; i < e->data.b2app.exprs->size(); i++){
+						exprs->push_back(e->data.b2app.exprs->at(i));
 						
 					}
 					
 					k = newKApp(values, exprs, copyK(k));
-					e = e->data.B2app.exprs->at(0);
+					e = e->data.b2app.exprs->at(0);
 				}
 				break;
 			
@@ -205,7 +213,7 @@ struct B2Expr *ck1(struct B2Expr *expr){
 				 		return e;
 				 		
 				 	case KIF:
-				 		if(e->data.B2val.b){
+				 		if(e->data.b2val.b){
 				 			e = k->data.kif.expr1;
 				 			
 						}else{
@@ -263,11 +271,27 @@ struct B2Expr *ck1(struct B2Expr *expr){
 	
 }
 
-struct B2Expr *delta(struct B2Expr *e, std::vector<B2Expr *> *values){
-		const char *pType = values->at(1)->data.B2val.prim->data.B2prim.pType;
+void plugVal(struct VarMap *varMap, struct B2Expr *var, struct B2Expr *val){
+	const char *vName = var->data.b2var.vName;
+	
+	int index = findIndex(varMap->keys, vName);
+	
+	if(index == -1){
+		varMap->keys->push_back(vName);
+		varMap->values->push_back(val);
 		
-		int val1 = values->at(0)->data.B2val.n;
-		int val2 = e->data.B2val.n;
+	}else{
+		varMap->values->at(index) = val;
+		
+	}
+	
+}
+
+struct B2Expr *delta(struct B2Expr *e, std::vector<B2Expr *> *values){
+		const char *pType = values->at(1)->data.b2val.prim->data.b2prim.pType;
+		
+		int val1 = values->at(0)->data.b2val.n;
+		int val2 = e->data.b2val.n;
 
 		if(strcmp(pType, "+") == 0){
 			return newVal(val1 + val2);
@@ -352,14 +376,27 @@ struct B2Con *copyK(struct B2Con *k){
 }
 
 int valEval(struct B2Expr *expr){
-	if(!expr->data.B2val.isBool){
-		return expr->data.B2val.n;
+	if(!expr->data.b2val.isBool){
+		return expr->data.b2val.n;
 		
-	}else if(expr->data.B2val.b){
+	}else if(expr->data.b2val.b){
 		return 1;
 		
 	}
 	
 	return 0;
+	
+}
+
+int findIndex(std::vector<const char *> *v, const char *s){
+	for(int i = 0; i < v->size(); i++){
+		if(strcmp(v->at(i), s) == 0){
+			return i;
+			
+		}
+		
+	}
+	
+	return -1;
 	
 }

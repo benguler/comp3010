@@ -20,8 +20,6 @@ struct B2Def{
 	
 };
 
-
-
 struct B2Expr {
 	enum ExprType type;
 	
@@ -94,6 +92,11 @@ struct B2Con {
 	
 };
 
+struct VarMap{
+	std::vector<const char *> *keys;
+	std::vector<B2Expr *> *values;
+};
+
 struct B2Expr *newIf(struct B2Expr *expr1, struct B2Expr *expr2, struct B2Expr *expr3);
 
 struct B2Expr *newApp(int n, ...);
@@ -112,17 +115,23 @@ struct B2Expr *newFunc(const char *fName);
 
 struct B2Def *newDef(struct B2Expr *func, struct B2Expr *expr, ...);
 
-struct B1Con *newKIf(struct B2Expr *expr1, struct B2Expr *expr2, struct B2Con *k);
+struct B2Con *newKIf(struct B2Expr *expr1, struct B2Expr *expr2, struct B2Con *k);
 
 struct B2Con *newKApp(std::vector<B2Expr *> *values, std::vector<B2Expr *> *exprs, struct B2Con *k);
+
+struct VarMap *newVarMap();
 
 struct B2Expr *ck1(struct B2Expr *expr);
 
 struct B2Expr *delta(struct B2Expr *e, std::vector<B2Expr *> *values);
 
+void plugVal(struct VarMap *varMap, struct B2Expr *var, struct B2Expr *val);
+
 struct B2Con *copyK(struct B2Con *k);
 
 int valEval(struct B2Expr *expr);
+
+int findIndex(std::vector<const char *> *v, const char *s);
 
 int main(int argc, char**argv);
 
