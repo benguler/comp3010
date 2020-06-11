@@ -179,7 +179,15 @@ struct VarMap *newVarMap(){
 	
 }
 
-struct B2Expr *ck1(struct B2Expr *expr){
+struct FuncMap *newFuncMap(){
+	struct FuncMap *fm = (struct FuncMap *)malloc(sizeof(struct FuncMap));
+	
+	fm->keys = new std::vector<const char *>;
+	fm->values = new std::vector<struct B2Def *>; 
+	
+}
+
+struct B2Expr *ck1(struct B2Expr *expr, struct VarMap *vm, struct FuncMap *fm){
 	struct B2Expr *e = expr;
 	
 	struct B2Con *k = newKRet();
@@ -228,8 +236,17 @@ struct B2Expr *ck1(struct B2Expr *expr){
 				 	case KAPP:
 				 		{	 
 					 		if(k->data.kapp.exprs->size() == 0){
-					 			e = delta(e, k->data.kapp.values);
-					 			k = k->data.kapp.k;
+					 			
+					 			switch(k->data.kapp.values->at(0)->type){
+								 	case FUNC:
+								 		break;
+								 		
+								 	default:
+						 				e = delta(e, k->data.kapp.values, 0, vm, fm);
+						 				k = k->data.kapp.k;
+					 					break;
+					 					
+					 			}
 					 			
 							 }else{
 								std::vector<B2Expr *> *exprs = new std::vector<B2Expr *>;
@@ -271,7 +288,7 @@ struct B2Expr *ck1(struct B2Expr *expr){
 	
 }
 
-void plugVal(struct VarMap *varMap, struct B2Expr *var, struct B2Expr *val){
+void plugVar(struct VarMap *varMap, struct B2Expr *var, struct B2Expr *val){
 	const char *vName = var->data.b2var.vName;
 	
 	int index = findIndex(varMap->keys, vName);
@@ -287,65 +304,113 @@ void plugVal(struct VarMap *varMap, struct B2Expr *var, struct B2Expr *val){
 	
 }
 
-struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values){
-		const char *pType = values->at(1)->data.b2val.prim->data.b2prim.pType;
+void plugFunc(struct FuncMap *funcMap, struct B2Expr *func, struct B2Def *def){
+	const char *fName = var->data.b2func.fName;
+	
+	int index = findIndex(funcMap->keys, fName);
+	
+	if(index == -1){
+		funcMap->keys->push_back(fName);
+		funcMap->values->push_back(def);
 		
-		int val1 = values->at(0)->data.b2val.n;
-		int val2 = e0->data.b2val.n;
+	}else{
+		funcMap->values->at(index) = def;
+		
+	}
+	
+}
 
-		if(strcmp(pType, "+") == 0){
-			return newVal(val1 + val2);
-			
-		}else if(strcmp(pType, "*") == 0){
-			return newVal(val1 * val2);
-			
-		}else if(strcmp(pType, "/") == 0){
-			return newVal(val1 / val2);
-			
-		}else if(strcmp(pType, "-") == 0){
-			return newVal(val1 - val2);
-			
-		}else if(strcmp(pType, "<=") == 0){
-			if(val1 <= val2){
-				return newVal(true);
+
+struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values, int t, struct VarMap *vm, struct FuncMap *fm){
+		
+		switch(t){
+			case 0:
+				{
+				const char *pType = values->at(1)->data.b2val.prim->data.b2prim.pType;
 				
-			}
-			
-			return newVal(false);
-			
-		}else if(strcmp(pType, "<") == 0){
-			if(val1 < val2){
-				return newVal(true);
+				int val1 = values->at(0)->data.b2val.n;
+				int val2 = e0->data.b2val.n;
+		
+				if(strcmp(pType, "+") == 0){
+					return newVal(val1 + val2);
+					
+				}else if(strcmp(pType, "*") == 0){
+					return newVal(val1 * val2);
+					
+				}else if(strcmp(pType, "/") == 0){
+					return newVal(val1 / val2);
+					
+				}else if(strcmp(pType, "-") == 0){
+					return newVal(val1 - val2);
+					
+				}else if(strcmp(pType, "<=") == 0){
+					if(val1 <= val2){
+						return newVal(true);
+						
+					}
+					
+					return newVal(false);
+					
+				}else if(strcmp(pType, "<") == 0){
+					if(val1 < val2){
+						return newVal(true);
+						
+					}
+					
+					return newVal(false);
+					
+				}else if(strcmp(pType, "=") == 0){
+					if(val1 == val2){
+						return newVal(true);
+						
+					}
+					
+					return newVal(false);
+					
+				}else if(strcmp(pType, ">") == 0){
+					if(val1 > val2){
+						return newVal(true);
+						
+					}
+					
+					return newVal(false);
+					
+				}else if(strcmp(pType, ">=") == 0){
+					if(val1 >= val2){
+						return newVal(true);
+						
+					}
+					
+					return newVal(false);
+					
+				}
 				
-			}
-			
-			return newVal(false);
-			
-		}else if(strcmp(pType, "=") == 0){
-			if(val1 == val2){
-				return newVal(true);
+				}
 				
-			}
-			
-			return newVal(false);
-			
-		}else if(strcmp(pType, ">") == 0){
-			if(val1 > val2){
-				return newVal(true);
+				break;
 				
-			}
-			
-			return newVal(false);
-			
-		}else if(strcmp(pType, ">=") == 0){
-			if(val1 >= val2){
-				return newVal(true);
+			case 1:
+				{
+					const char *fName = values->at(values->size()-1)->data.b2func.fName;
+					struct B2Def *fDef = fm->values->at(findIndex(fm->keys, fName));
+					
+					struct B2Expr *fBody = fDef->expr;
+					
+					for(int i = 1; int i < values->size()-1; i++){
+						plugVar(vm, fDef->vars->at(i), values->at(i));
+												
+					}
+					
+					plugVar(vm, fDef->vars->at(0), e0);
+					
+				}
 				
-			}
-			
-			return newVal(false);
+				return fBody;
+				
+				break;
 			
 		}
+			
 		
 		return 0;
 	
