@@ -45,6 +45,17 @@ struct B2Expr *newApp(int n, ...){
 	
 }
 
+struct B2Expr *newApp(std::vector<B2Expr *> *exprs){
+	struct B2Expr *expr = (struct B2Expr *)malloc(sizeof(struct B2Expr));
+
+	expr->type = APP;
+	
+	expr->data.b2app.exprs = exprs;
+	
+	return expr;
+	
+}
+
 struct B2Expr *newVal(int n){
 	struct B2Expr *expr = (struct B2Expr *)malloc(sizeof(struct B2Expr));
 	
@@ -187,7 +198,7 @@ struct FuncMap *newFuncMap(){
 	
 }
 
-struct B2Expr *ck1(struct B2Expr *expr, struct VarMap *vm, struct FuncMap *fm){
+struct B2Expr *ck1(struct B2Expr *expr, struct VarMap, struct FuncMap *fm){
 	struct B2Expr *e = expr;
 	
 	struct B2Con *k = newKRet();
@@ -242,7 +253,7 @@ struct B2Expr *ck1(struct B2Expr *expr, struct VarMap *vm, struct FuncMap *fm){
 								 		break;
 								 		
 								 	default:
-						 				e = delta(e, k->data.kapp.values, 0, vm, fm);
+						 				e = delta(e, k->data.kapp.values, 0, fm);
 						 				k = k->data.kapp.k;
 					 					break;
 					 					
@@ -304,8 +315,20 @@ void plugVar(struct VarMap *varMap, struct B2Expr *var, struct B2Expr *val){
 	
 }
 
+struct B2Expr *getVar(struct VarMap *varMap, const char *varName){
+	int index = findIndex(varMap->keys, varName);
+	
+	if (index == -1){
+		return newVal(false);
+		
+	}
+	
+	return varMap->values->at(index);
+	
+}
+
 void plugFunc(struct FuncMap *funcMap, struct B2Expr *func, struct B2Def *def){
-	const char *fName = var->data.b2func.fName;
+	const char *fName = func->data.b2func.fName;
 	
 	int index = findIndex(funcMap->keys, fName);
 	
@@ -321,7 +344,7 @@ void plugFunc(struct FuncMap *funcMap, struct B2Expr *func, struct B2Def *def){
 }
 
 
-struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values, int t, struct VarMap *vm, struct FuncMap *fm){
+struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values, int t, struct FuncMap *fm){
 		
 		switch(t){
 			case 0:
@@ -394,18 +417,20 @@ struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values, int t, st
 					const char *fName = values->at(values->size()-1)->data.b2func.fName;
 					struct B2Def *fDef = fm->values->at(findIndex(fm->keys, fName));
 					
-					struct B2Expr *fBody = fDef->expr;
-					
-					for(int i = 1; int i < values->size()-1; i++){
-						plugVar(vm, fDef->vars->at(i), values->at(i));
-												
+					std::vector<B2Expr *> *newValues = new std::vector<B2Expr *>; 
+	
+					newValues->push_back(e0);
+	
+					for(int i = 0; i < values->size()-1; i++){
+						newValues->push_back(values->at(i));
+		
 					}
 					
-					plugVar(vm, fDef->vars->at(0), e0);
+					struct B2Expr *fBody = substitute(fDef, newValues, newVarMap());
+					
+					return fBody;
 					
 				}
-				
-				return fBody;
 				
 				break;
 			
@@ -413,6 +438,90 @@ struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values, int t, st
 			
 		
 		return 0;
+	
+}
+
+struct B2Expr *substitute(struct B2Def *def, std::vector<B2Expr *> *values, struct VarMap *vm){
+	
+	for(int i = 1; i < values->size(); i++){
+		plugVar(vm, def->vars->at(i), values->at(i));
+												
+	}
+	
+	switch(def->expr->type){
+		case APP:
+			{
+				std::vector<B2Expr *> *exprs =  new std::vector<B2Expr *>;
+				
+				for (int i = 0; i < def->expr->data.b2app.exprs->size(); i++){
+					switch(def->expr->data.b2app.exprs->at(i)->type){
+						case VAR:
+							exprs->push_back(getVar(vm, def->expr->data.b2app.exprs->at(i)->data.b2var.vName));
+							break;
+							
+						default:
+							exprs->push_back(def->expr->data.b2app.exprs->at(i));
+							break;
+						
+					}
+					
+				}	
+				
+				return newApp(exprs);
+			}
+			
+		case IF:
+			{
+				struct B2Expr *expr1;
+				struct B2Expr *expr2;
+				struct B2Expr *expr3;
+				
+				switch(def->expr->data.b2if.expr1->type){
+					case VAR:
+						expr1 = getVar(vm, def->expr->data.b2if.expr1->data.b2var.vName);
+						break;
+						
+					default:
+						expr1 = def->expr->data.b2if.expr1;
+						break;
+					
+				}
+				
+				switch(def->expr->data.b2if.expr2->type){
+					case VAR:
+						expr2 = getVar(vm, def->expr->data.b2if.expr2->data.b2var.vName);
+						break;
+						
+					default:
+						expr2 = def->expr->data.b2if.expr2;
+						break;
+					
+				}
+				
+				switch(def->expr->data.b2if.expr3->type){
+					case VAR:
+						expr3 = getVar(vm, def->expr->data.b2if.expr3->data.b2var.vName);
+						break;
+						
+					default:
+						expr3 = def->expr->data.b2if.expr2;
+						break;
+					
+				}
+				
+				return newIf(expr1, expr2, expr3);
+			}
+			
+		case VAL:
+			return def->expr;
+			
+		case VAR:
+			{	
+				return getVar(vm, def->expr->data.b2var.vName);
+				
+			}
+			
+	}
 	
 }
 

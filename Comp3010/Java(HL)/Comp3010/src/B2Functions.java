@@ -49,11 +49,7 @@ public class B2Functions {
 			case VAR:
 				B2Var varExpr = (B2Var) expr;
 				
-				int step = bigStep(vm.getVal(varExpr), vm, fm);
-				
-				//vm.removeVal(varExpr);
-				
-				return step;
+				return bigStep(vm.getVal(varExpr), vm, fm);
 				
 			default:
 				break;
@@ -133,12 +129,14 @@ public class B2Functions {
 				
 				B2Def def = fm.getDef(funcExpr);
 				
+				VarMap vmNew = new VarMap();	//Pass a new VarMap to maintain scope
+				
 				for(int i = 0; i < exprs.size(); i ++) {
-					vm.setVar(def.getVars().get(i), new B2Val(bigStep(exprs.get(i), vm, fm)));
+					vmNew.setVar(def.getVars().get(i), new B2Val(bigStep(exprs.get(i), vm, fm)));
 					
 				}
 				
-				return bigStep(def.getExpr(), vm, fm);
+				return bigStep(def.getExpr(), vmNew, fm);
 				
 			default:
 				break;

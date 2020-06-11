@@ -197,7 +197,7 @@ class TestSuite {
 		Cons b2App1 = new Cons(new Atom("DOUBLE"), new Cons(new Atom("+"), new Cons(new Atom("1"), new Atom("1"))));
 		Cons b2App2 = new Cons(new Atom("DIFFERENCE"), new Cons(new Atom("8"), new Atom("3")));
 		Cons b2App3 = new Cons(new Atom("RECUR"), new Atom("13"));
-		Cons b2App4 = new Cons(new Atom("FIB"), new Atom("4"));
+		Cons b2App4 = new Cons(new Atom("FIB"), new Atom("8"));
 		Cons b2App5 = new Cons(new Atom("FIVE"), new Empty());
 		Cons b2App6 = new Cons(new Atom("QUADRUPLE"), new Atom("2"));
 		Cons b2App7 = new Cons(new Atom("UNTILNI"), new Atom("2"));
@@ -210,12 +210,12 @@ class TestSuite {
 		//Cons b2App5 = new Cons(new Atom("FIB"), new Atom("4"));
 		//Cons b2App6 = new Cons(new Atom("FIB"), new Atom("5"));
 		
-		assertEquals(b2.bigStep(b2App1.desugarB2Expr(), vm, fm), 4, "DOUBLE");
-		assertEquals(b2.bigStep(b2App2.desugarB2Expr(), vm, fm), 5, "DIFFERENCE");
-		assertEquals(b2.bigStep(b2App3.desugarB2Expr(), vm, fm), 6, "RECUR");
-		assertEquals(b2.bigStep(b2App4.desugarB2Expr(), vm, fm), 2, "FIB");
-		assertEquals(b2.bigStep(b2App5.desugarB2Expr(), vm, fm), 5, "FIVE");
-		assertEquals(b2.bigStep(b2App6.desugarB2Expr(), vm, fm), 8, "QUADRUPBLE");
+		assertEquals(b2.bigStep(b2App1.desugarB2Expr(), vm, fm), 4,  "DOUBLE");
+		assertEquals(b2.bigStep(b2App2.desugarB2Expr(), vm, fm), 5,  "DIFFERENCE");
+		assertEquals(b2.bigStep(b2App3.desugarB2Expr(), vm, fm), 6,  "RECUR");
+		assertEquals(b2.bigStep(b2App4.desugarB2Expr(), vm, fm), 21, "FIB");
+		assertEquals(b2.bigStep(b2App5.desugarB2Expr(), vm, fm), 5,  "FIVE");
+		assertEquals(b2.bigStep(b2App6.desugarB2Expr(), vm, fm), 8,  "QUADRUPBLE");
 		assertEquals(b2.bigStep(b2App7.desugarB2Expr(), vm, fm), -1, "UNTILNI");
 		assertEquals(b2.bigStep(b2App8.desugarB2Expr(), vm, fm), -1, "UNTILNII");
 		

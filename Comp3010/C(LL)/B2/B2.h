@@ -106,6 +106,8 @@ struct B2Expr *newIf(struct B2Expr *expr1, struct B2Expr *expr2, struct B2Expr *
 
 struct B2Expr *newApp(int n, ...);
 
+struct B2Expr *newApp(std::vector<B2Expr *> *exprs);
+
 struct B2Expr *newVal(int n);
 
 struct B2Expr *newVal(bool b);
@@ -128,11 +130,15 @@ struct VarMap *newVarMap();
 
 struct FuncMap *newFuncMap();
 
-struct B2Expr *ck1(struct B2Expr *expr, struct VarMap *vm, struct FuncMap *fm);
+struct B2Expr *ck1(struct B2Expr *expr, struct FuncMap *fm);
 
-struct B2Expr *delta(struct B2Expr *e, std::vector<B2Expr *> *values, int t, struct VarMap *vm, struct FuncMap *fm);
+struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values, int t, struct FuncMap *fm);
+
+struct B2Expr *substitute(struct B2Def *def, std::vector<B2Expr *> *values, struct VarMap *vm);
 
 void plugVar(struct VarMap *varMap, struct B2Expr *var, struct B2Expr *val);
+
+struct B2Expr *getVar(struct VarMap *varMap, const char *varName);
 
 void plugFunc(struct FuncMap *funcMap, struct B2Expr *func, struct B2Def *def);
 
