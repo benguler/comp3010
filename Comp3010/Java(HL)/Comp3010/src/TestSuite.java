@@ -148,8 +148,7 @@ class TestSuite {
 		//B2 Desugar Tests 
 		
 		B2Functions b2 = new B2Functions();
-		
-		VarMap vm = new VarMap();
+
 		FuncMap fm = new FuncMap();
 		
 		Cons b2Func1 = new Cons(new Atom("def"), new Cons(new Atom("DOUBLE"), new Cons(new Atom("x"),
@@ -210,14 +209,14 @@ class TestSuite {
 		//Cons b2App5 = new Cons(new Atom("FIB"), new Atom("4"));
 		//Cons b2App6 = new Cons(new Atom("FIB"), new Atom("5"));
 		
-		assertEquals(b2.bigStep(b2App1.desugarB2Expr(), vm, fm), 4,  "DOUBLE");
-		assertEquals(b2.bigStep(b2App2.desugarB2Expr(), vm, fm), 5,  "DIFFERENCE");
-		assertEquals(b2.bigStep(b2App3.desugarB2Expr(), vm, fm), 6,  "RECUR");
-		assertEquals(b2.bigStep(b2App4.desugarB2Expr(), vm, fm), 21, "FIB");
-		assertEquals(b2.bigStep(b2App5.desugarB2Expr(), vm, fm), 5,  "FIVE");
-		assertEquals(b2.bigStep(b2App6.desugarB2Expr(), vm, fm), 8,  "QUADRUPBLE");
-		assertEquals(b2.bigStep(b2App7.desugarB2Expr(), vm, fm), -1, "UNTILNI");
-		assertEquals(b2.bigStep(b2App8.desugarB2Expr(), vm, fm), -1, "UNTILNII");
+		assertEquals(b2.bigStep(b2App1.desugarB2Expr(), new VarMap(), fm), 4,  "DOUBLE");
+		assertEquals(b2.bigStep(b2App2.desugarB2Expr(), new VarMap(), fm), 5,  "DIFFERENCE");
+		assertEquals(b2.bigStep(b2App3.desugarB2Expr(), new VarMap(), fm), 6,  "RECUR");
+		assertEquals(b2.bigStep(b2App4.desugarB2Expr(), new VarMap(), fm), 21, "FIB");
+		assertEquals(b2.bigStep(b2App5.desugarB2Expr(), new VarMap(), fm), 5,  "FIVE");
+		assertEquals(b2.bigStep(b2App6.desugarB2Expr(), new VarMap(), fm), 8,  "QUADRUPBLE");
+		assertEquals(b2.bigStep(b2App7.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNI");
+		assertEquals(b2.bigStep(b2App8.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNII");
 		
 	}
 

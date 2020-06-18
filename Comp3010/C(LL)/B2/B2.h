@@ -64,7 +64,7 @@ struct B2Expr {
 	
 };
 
-enum KType {KRET, KIF, KAPP};
+enum KType {KRET, KIF, KAPP, KIFCEK, KAPPCEK};
 
 struct B2Con {
 	enum KType type;
@@ -78,6 +78,7 @@ struct B2Con {
 			struct B2Expr *expr1;
 			struct B2Expr *expr2;
 			struct B2Con *k;
+			struct VarMap *env;
 			
 		} kif;
 		
@@ -85,6 +86,7 @@ struct B2Con {
 			std::vector<B2Expr *> *values;
 			std::vector<B2Expr *> *exprs;
 			struct B2Con *k;
+			struct VarMap *env;
 			
 		} kapp;
 		
@@ -120,11 +122,15 @@ struct B2Expr *newVar(const char *vName);
 
 struct B2Expr *newFunc(const char *fName);
 
-struct B2Def *newDef(struct B2Expr *func, struct B2Expr *expr, ...);
+struct B2Def *newDef(int n, struct B2Expr *func, struct B2Expr *expr, ...);
 
 struct B2Con *newKIf(struct B2Expr *expr1, struct B2Expr *expr2, struct B2Con *k);
 
 struct B2Con *newKApp(std::vector<B2Expr *> *values, std::vector<B2Expr *> *exprs, struct B2Con *k);
+
+struct B2Con *newKIf(struct VarMap *env, struct B2Expr *expr1, struct B2Expr *expr2, struct B2Con *k);
+
+struct B2Con *newKApp(std::vector<B2Expr *> *values, struct VarMap *env, std::vector<B2Expr *> *exprs, struct B2Con *k);
 
 struct VarMap *newVarMap();
 
@@ -132,17 +138,23 @@ struct FuncMap *newFuncMap();
 
 struct B2Expr *ck1(struct B2Expr *expr, struct FuncMap *fm);
 
+struct B2Expr *cek1(struct B2Expr *expr, struct VarMap *vm, struct FuncMap *fm);
+
 struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values, int t, struct FuncMap *fm);
 
 struct B2Expr *substitute(struct B2Def *def, std::vector<B2Expr *> *values, struct VarMap *vm);
 
 void plugVar(struct VarMap *varMap, struct B2Expr *var, struct B2Expr *val);
 
-struct B2Expr *getVar(struct VarMap *varMap, const char *varName);
+struct B2Expr *getVar(struct VarMap *varMap, B2Expr *var);
 
-void plugFunc(struct FuncMap *funcMap, struct B2Expr *func, struct B2Def *def);
+struct B2Def *getDef(struct FuncMap *funcMap, B2Expr *func);
+
+void define(struct FuncMap *funcMap, struct B2Def *def);
 
 struct B2Con *copyK(struct B2Con *k);
+
+struct VarMap *copyVarMap(struct VarMap *vm);
 
 int valEval(struct B2Expr *expr);
 
