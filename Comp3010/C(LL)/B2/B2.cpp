@@ -242,6 +242,7 @@ struct B2Expr *getVar(struct VarMap *varMap, B2Expr *var){
 	int index = findIndex(varMap->keys, vName);
 	
 	if (index == -1){
+		cout<<"As it should be"<<endl;
 		return newVal(false);
 		
 	}
@@ -584,7 +585,7 @@ struct B2Expr *substitute(struct B2Def *def, std::vector<B2Expr *> *values, stru
 	
 }
 
-struct B2Expr *cek1(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm){
+struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm){
 	struct B2Expr *e = expr;
 	
 	struct B2Con *k = newKRet();

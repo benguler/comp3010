@@ -138,7 +138,7 @@ struct FuncMap *newFuncMap();
 
 struct B2Expr *ck1(struct B2Expr *expr, struct FuncMap *fm);
 
-struct B2Expr *cek1(struct B2Expr *expr, struct VarMap *vm, struct FuncMap *fm);
+struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *vm, struct FuncMap *fm);
 
 struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values, int t, struct FuncMap *fm);
 
