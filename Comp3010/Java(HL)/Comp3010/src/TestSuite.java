@@ -214,7 +214,7 @@ class TestSuite {
 		assertEquals(b2.bigStep(b2App3.desugarB2Expr(), new VarMap(), fm), 6,  "RECUR");
 		assertEquals(b2.bigStep(b2App4.desugarB2Expr(), new VarMap(), fm), 21, "FIB");
 		assertEquals(b2.bigStep(b2App5.desugarB2Expr(), new VarMap(), fm), 5,  "FIVE");
-		assertEquals(b2.bigStep(b2App6.desugarB2Expr(), new VarMap(), fm), 8,  "QUADRUPBLE");
+		assertEquals(b2.bigStep(b2App6.desugarB2Expr(), new VarMap(), fm), 8,  "QUADRUPLE");
 		assertEquals(b2.bigStep(b2App7.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNI");
 		assertEquals(b2.bigStep(b2App8.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNII");
 		
