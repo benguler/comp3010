@@ -197,10 +197,157 @@ public class Cons implements BSexpr{
 		
 	}
 	
-	@Override
-	public Pair desugarB2() {
-		// TODO Auto-generated method stub
+	//desugar for b3 exprs
+		@Override
+	public B3Expr desugarB3Expr() {
+		if(lhs.getType() == type.ATOM) {
+			String atom = ((Atom) lhs).getAtom();
+			
+			if(atom == "if") {
+				Cons cons = (Cons)rhs;
+				Cons cons2 = (Cons)cons.getRhs();
+				
+				return new B3If(cons.getLhs().desugarB3Expr(), cons2.getLhs().desugarB3Expr(), cons2.getRhs().desugarB3Expr());	//cons(if, cons(e, cons(e, e))) 
+			
+			}else if(atom == "lambda") {
+				Cons cons = (Cons)rhs;
+				ArrayList<B3Var> vars = new ArrayList<B3Var>();
+				B3Expr expr = cons.getRhs().desugarB3Expr();
+				
+				boolean keepGoing = true;
+				
+				switch(cons.getLhs().getType()) {
+					case ATOM:
+						vars.add((B3Var)(cons.getLhs().desugarB3Expr()));
+						keepGoing = false;
+						break;
+						
+					case CONS:
+						cons = (Cons)cons.getLhs();
+						break;
+						
+					default:
+						break;
+						
+				}
+				
+				while(keepGoing) {
+					vars.add((B3Var)(cons.getLhs().desugarB3Expr()));
+					
+					switch(cons.getRhs().getType()) {
+						case ATOM:
+							vars.add((B3Var)(cons.getRhs().desugarB3Expr()));
+							keepGoing = false;
+							break;
+							
+						case CONS:
+							cons = (Cons)cons.getRhs();
+							break;
+							
+						default:
+							break;
+							
+					}
+				
+				}
+				
+				return new B3Lambda(vars, expr);
+				
+			}else if(atom == "+" || atom == "*" || atom == "/" || atom == "-" 
+					|| atom == ">" || atom == ">=" || atom == "=" || atom == "<"
+					|| atom == "<=") {
+				
+				Cons cons = (Cons)rhs;
+				ArrayList<B3Expr> params = new ArrayList<B3Expr>();
+				
+				params.add(new B3Val(new B3Prim(atom)));
+				params.add(cons.getLhs().desugarB3Expr());
+				params.add(cons.getRhs().desugarB3Expr());
+				
+				return new B3App(params);	//cons(*, cons(e, e)) 
+				
+			}else if (atom == "let") {
+				Cons cons = (Cons)rhs;
+				ArrayList<B3Expr> params = new ArrayList<B3Expr>();
+				B3Expr lambdaExpr = cons.getRhs().desugarB3Expr();
+				
+				Cons subCons = (Cons)cons.getLhs();
+				B3Var lamdaVar = (B3Var)(subCons.getLhs().desugarB3Expr());
+				B3Expr varVal = (B3Expr)(subCons.getRhs().desugarB3Expr());
+				
+				params.add(new B3Lambda(lamdaVar, lambdaExpr));
+				params.add(varVal);
+				
+				return new B3App(params);
+				
+				
+			}
+			
+		}else {	//Lambda application
+			Cons cons = (Cons)rhs;
+			
+			ArrayList<B3Expr> params = new ArrayList<B3Expr>();
+			params.add(lhs.desugarB3Expr());
+			
+			if(rhs.getType() == type.EMPTY) {
+				
+				
+			}else if(rhs.getType() == type.ATOM) {
+				params.add(rhs.desugarB3Expr());
+			
+			}else {
+				Atom subAtom2 = (Atom)cons.getLhs();
+				
+				if(subAtom2.getAtom().charAt(0) != '0' && subAtom2.getAtom().charAt(0) != '1' && subAtom2.getAtom().charAt(0) != '2' && 
+				   subAtom2.getAtom().charAt(0) != '3' && subAtom2.getAtom().charAt(0) != '4' && subAtom2.getAtom().charAt(0) != '5' && 
+				   subAtom2.getAtom().charAt(0) != '6' && subAtom2.getAtom().charAt(0) != '7' && subAtom2.getAtom().charAt(0) != '8' && 
+				   subAtom2.getAtom().charAt(0) != '9' && subAtom2.getAtom() != "true"        && subAtom2.getAtom() != "false") {
+					
+					params.add(cons.desugarB3Expr());
+					
+				}else {
+				
+					while(true) {
+						params.add(cons.lhs.desugarB3Expr());
+						
+						if(cons.rhs.getType() == type.ATOM) {
+							params.add(cons.rhs.desugarB3Expr());
+							break;
+							
+						}else if(cons.rhs.getType() == type.CONS) {
+							Cons subCons = (Cons)cons.rhs;
+							
+							if(subCons.getLhs().getType() == type.ATOM) {
+								Atom subAtom1 = (Atom)subCons.getLhs();
+								
+								if(subAtom1.getAtom().charAt(0) != '0' && subAtom1.getAtom().charAt(0) != '1' && subAtom1.getAtom().charAt(0) != '2' && 
+								   subAtom1.getAtom().charAt(0) != '3' && subAtom1.getAtom().charAt(0) != '4' && subAtom1.getAtom().charAt(0) != '5' && 
+								   subAtom1.getAtom().charAt(0) != '6' && subAtom1.getAtom().charAt(0) != '7' && subAtom1.getAtom().charAt(0) != '8' && 
+								   subAtom1.getAtom().charAt(0) != '9' && subAtom1.getAtom() != "true"        && subAtom1.getAtom() != "false") {
+									
+									params.add(cons.rhs.desugarB3Expr());
+									break;
+									
+								}
+								
+							}
+							
+						}
+						
+						cons = (Cons)cons.rhs;
+						
+					}
+				
+				}
+				
+			}
+			
+			return new B3App(params);
+			
+		}
+		
 		return null;
+			
 	}
 
 	@Override

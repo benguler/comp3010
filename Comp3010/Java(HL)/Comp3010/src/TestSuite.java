@@ -218,6 +218,10 @@ class TestSuite {
 		assertEquals(b2.bigStep(b2App7.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNI");
 		assertEquals(b2.bigStep(b2App8.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNII");
 		
+		//B2 Desugar Tests 
+		
+		Cons b3Lamb1 = new Cons(new Cons(new Atom("lambda"), new Cons(new Atom("x"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("1"))))), new Atom("1"));
+		
 	}
 
 }

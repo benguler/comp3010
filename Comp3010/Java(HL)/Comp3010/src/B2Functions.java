@@ -67,11 +67,10 @@ public class B2Functions {
 	
 	public int delta(B2Expr op, ArrayList<B2Expr> exprs, VarMap vm, FuncMap fm) {
 		
-		switch(op.getType()) {
-			case VAL:
-				
-				B2Val valExpr = (B2Val) op;
-				
+		B2Val valExpr = (B2Val)op;
+		
+		switch(valExpr.getValType()) {
+			case PRIM:
 				switch(valExpr.getPrim().getPrimType()) {
 					case "+":
 						return bigStep(exprs.get(0), vm, fm) + bigStep(exprs.get(1), vm, fm);
@@ -125,7 +124,7 @@ public class B2Functions {
 				
 			case FUNC:
 				
-				B2Func funcExpr = (B2Func) op;
+				B2Func funcExpr = valExpr.getFunc();
 				
 				B2Def def = fm.getDef(funcExpr);
 				

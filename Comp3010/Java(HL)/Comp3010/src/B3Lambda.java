@@ -10,6 +10,13 @@ public class B3Lambda implements B3Expr{
 		this.vars = vars;
 		this.expr = expr;
 	}
+	
+	public B3Lambda(B3Var var, B3Expr expr) {
+		super();
+		this.vars = new ArrayList<B3Var>();
+		this.vars.add(var);
+		this.expr = expr;
+	}
 
 	@Override
 	public ExprType getType() {

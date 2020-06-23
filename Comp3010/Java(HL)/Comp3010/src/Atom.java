@@ -92,20 +92,49 @@ public class Atom implements BSexpr{
 			
 		}
 		
-		return new B2Func(atom);
+		return new B2Val(new B2Func(atom));
 	 
-	}
-
-	@Override
-	public Pair desugarB2() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
 	public B2Def desugarB2Def() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public B3Expr desugarB3Expr() {
+		try { 												//If atom contains an integer
+	        return new B3Val(Integer.parseInt(atom));
+	       
+	        
+	    } catch(NumberFormatException e) { 
+	        
+	    }
+	 
+		switch(atom) {
+		 	case "true":
+		 		return new B3Val(true);
+		 	case "false":
+		 		return new B3Val(false);
+		 	default:										//If atom does not contain an int or a bool, it contains a prim
+		 		if(atom == "+" || atom == "*" || atom == "/" || atom == "-" 
+				|| atom == ">" || atom == ">=" || atom == "=" || atom == "<"
+				|| atom == "<=") {
+		 			return new B3Val(new B3Prim(atom));
+		 		}
+		 		
+		 		break;
+		 		
+		}
+		
+		if(atom == atom.toLowerCase()) {
+			return new B3Var(atom);
+			
+		}
+		
+		return null;
+	 
 	}
 
 }

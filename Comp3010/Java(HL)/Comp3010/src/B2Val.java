@@ -4,7 +4,8 @@ public class B2Val implements B2Expr {
 	public enum ValType{
 		NUM,
 		BOOL,
-		PRIM
+		PRIM,
+		FUNC
 	}
 	
 	private ValType valType;
@@ -12,6 +13,7 @@ public class B2Val implements B2Expr {
 	private int num;
 	private boolean bool;
 	private B2Prim prim;
+	private B2Func func;
 	
 	public B2Val(int num) {			//v := n
 		this.num = num;
@@ -33,6 +35,13 @@ public class B2Val implements B2Expr {
 		valType = ValType.PRIM;
 		
 	}
+	
+	public B2Val(B2Func func) {		//v := f
+		this.func = func;
+		
+		valType = ValType.FUNC;
+		
+	}
 
 	@Override
 	public ExprType getType() {
@@ -49,6 +58,10 @@ public class B2Val implements B2Expr {
 
 	public B2Prim getPrim() {
 		return prim;
+	}
+	
+	public B2Func getFunc() {
+		return func;
 	}
 
 	public ValType getValType() {
