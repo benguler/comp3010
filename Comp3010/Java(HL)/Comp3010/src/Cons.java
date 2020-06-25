@@ -88,63 +88,77 @@ public class Cons implements BSexpr{
 				return new B2App(params);	//cons(*, cons(e, e)) 
 				
 			} else if (atom == atom.toUpperCase()) {
-				
 				ArrayList<B2Expr> params = new ArrayList<B2Expr>();
 				
 				params.add(lhs.desugarB2Expr());
 				
-				if(rhs.getType() == type.EMPTY) {
-					
-					
-				}else if(rhs.getType() == type.ATOM) {
-					params.add(rhs.desugarB2Expr());
-				
-				}else {
-					Cons cons = (Cons)rhs;
-					
-					Atom subAtom2 = (Atom)cons.getLhs();
-					
-					if(subAtom2.getAtom().charAt(0) != '0' && subAtom2.getAtom().charAt(0) != '1' && subAtom2.getAtom().charAt(0) != '2' && 
-					   subAtom2.getAtom().charAt(0) != '3' && subAtom2.getAtom().charAt(0) != '4' && subAtom2.getAtom().charAt(0) != '5' && 
-					   subAtom2.getAtom().charAt(0) != '6' && subAtom2.getAtom().charAt(0) != '7' && subAtom2.getAtom().charAt(0) != '8' && 
-					   subAtom2.getAtom().charAt(0) != '9' && subAtom2.getAtom() != "true"        && subAtom2.getAtom() != "false") {
+				switch(rhs.getType()) {
+					case EMPTY:
+						break;
 						
-						params.add(cons.desugarB2Expr());
-						
-					}else {
+	
+					case ATOM:
+						params.add(rhs.desugarB2Expr());
+						break;
 					
-						while(true) {
-							params.add(cons.lhs.desugarB2Expr());
+					case CONS:
+						Cons cons = (Cons)rhs;
+						
+						Atom subAtom2 = (Atom)cons.getLhs();
+						
+						if(subAtom2.getAtom().charAt(0) != '0' && subAtom2.getAtom().charAt(0) != '1' && subAtom2.getAtom().charAt(0) != '2' && 
+						   subAtom2.getAtom().charAt(0) != '3' && subAtom2.getAtom().charAt(0) != '4' && subAtom2.getAtom().charAt(0) != '5' && 
+						   subAtom2.getAtom().charAt(0) != '6' && subAtom2.getAtom().charAt(0) != '7' && subAtom2.getAtom().charAt(0) != '8' && 
+						   subAtom2.getAtom().charAt(0) != '9' && subAtom2.getAtom() != "true"        && subAtom2.getAtom() != "false") {
 							
-							if(cons.rhs.getType() == type.ATOM) {
-								params.add(cons.rhs.desugarB2Expr());
-								break;
+							params.add(cons.desugarB2Expr());
+							
+						}else {
+							boolean keepGoing = true;
+							
+							while(keepGoing) {
+								params.add(cons.lhs.desugarB2Expr());
 								
-							}else if(cons.rhs.getType() == type.CONS) {
-								Cons subCons = (Cons)cons.rhs;
-								
-								if(subCons.getLhs().getType() == type.ATOM) {
-									Atom subAtom1 = (Atom)subCons.getLhs();
-									
-									if(subAtom1.getAtom().charAt(0) != '0' && subAtom1.getAtom().charAt(0) != '1' && subAtom1.getAtom().charAt(0) != '2' && 
-									   subAtom1.getAtom().charAt(0) != '3' && subAtom1.getAtom().charAt(0) != '4' && subAtom1.getAtom().charAt(0) != '5' && 
-									   subAtom1.getAtom().charAt(0) != '6' && subAtom1.getAtom().charAt(0) != '7' && subAtom1.getAtom().charAt(0) != '8' && 
-									   subAtom1.getAtom().charAt(0) != '9' && subAtom1.getAtom() != "true"        && subAtom1.getAtom() != "false") {
-										
+								switch(cons.rhs.getType()) {
+									case ATOM:
 										params.add(cons.rhs.desugarB2Expr());
+										keepGoing = false;
 										break;
 										
-									}
+									case CONS:
+										Cons subCons = (Cons)cons.rhs;
+										
+										if(subCons.getLhs().getType() == type.ATOM) {
+											Atom subAtom1 = (Atom)subCons.getLhs();
+											
+											if(subAtom1.getAtom().charAt(0) != '0' && subAtom1.getAtom().charAt(0) != '1' && subAtom1.getAtom().charAt(0) != '2' && 
+											   subAtom1.getAtom().charAt(0) != '3' && subAtom1.getAtom().charAt(0) != '4' && subAtom1.getAtom().charAt(0) != '5' && 
+											   subAtom1.getAtom().charAt(0) != '6' && subAtom1.getAtom().charAt(0) != '7' && subAtom1.getAtom().charAt(0) != '8' && 
+											   subAtom1.getAtom().charAt(0) != '9' && subAtom1.getAtom() != "true"        && subAtom1.getAtom() != "false") {
+												
+												params.add(cons.rhs.desugarB2Expr());
+												keepGoing = false;
+												
+											}
+											
+										}
+										
+										break;
+										
+									default:
+										keepGoing = false;
+										break;
+									
+								}
+								
+								if(keepGoing) {
+									cons = (Cons)cons.rhs;
 									
 								}
 								
 							}
-							
-							cons = (Cons)cons.rhs;
-							
+						
 						}
-					
-					}
 					
 				}
 				
@@ -198,151 +212,262 @@ public class Cons implements BSexpr{
 	}
 	
 	//desugar for b3 exprs
-		@Override
+		
+	@Override
 	public B3Expr desugarB3Expr() {
-		if(lhs.getType() == type.ATOM) {
-			String atom = ((Atom) lhs).getAtom();
-			
-			if(atom == "if") {
-				Cons cons = (Cons)rhs;
-				Cons cons2 = (Cons)cons.getRhs();
+		switch(lhs.getType()) {
+		
+			case ATOM:
+				String atom = ((Atom) lhs).getAtom();
 				
-				return new B3If(cons.getLhs().desugarB3Expr(), cons2.getLhs().desugarB3Expr(), cons2.getRhs().desugarB3Expr());	//cons(if, cons(e, cons(e, e))) 
-			
-			}else if(atom == "lambda") {
-				Cons cons = (Cons)rhs;
-				ArrayList<B3Var> vars = new ArrayList<B3Var>();
-				B3Expr expr = cons.getRhs().desugarB3Expr();
-				
-				boolean keepGoing = true;
-				
-				switch(cons.getLhs().getType()) {
-					case ATOM:
-						vars.add((B3Var)(cons.getLhs().desugarB3Expr()));
-						keepGoing = false;
-						break;
-						
-					case CONS:
-						cons = (Cons)cons.getLhs();
-						break;
-						
-					default:
-						break;
-						
-				}
-				
-				while(keepGoing) {
-					vars.add((B3Var)(cons.getLhs().desugarB3Expr()));
+				if(atom == "if") {
+					Cons cons = (Cons)rhs;
+					Cons cons2 = (Cons)cons.getRhs();
 					
-					switch(cons.getRhs().getType()) {
+					return new B3If(cons.getLhs().desugarB3Expr(), cons2.getLhs().desugarB3Expr(), cons2.getRhs().desugarB3Expr());	//cons(if, cons(e, cons(e, e))) 
+				
+				}else if(atom == "lambda") {
+					Cons cons = (Cons)rhs;
+					ArrayList<B3Var> vars = new ArrayList<B3Var>();
+					B3Expr expr = cons.getRhs().desugarB3Expr();
+					
+					boolean keepGoing = true;
+					
+					switch(cons.getLhs().getType()) {
 						case ATOM:
-							vars.add((B3Var)(cons.getRhs().desugarB3Expr()));
+							vars.add((B3Var)(cons.getLhs().desugarB3Expr()));
 							keepGoing = false;
 							break;
 							
 						case CONS:
-							cons = (Cons)cons.getRhs();
+							cons = (Cons)cons.getLhs();
+							break;
+							
+						case EMPTY:
+							keepGoing = false;
 							break;
 							
 						default:
 							break;
 							
 					}
-				
-				}
-				
-				return new B3Lambda(vars, expr);
-				
-			}else if(atom == "+" || atom == "*" || atom == "/" || atom == "-" 
-					|| atom == ">" || atom == ">=" || atom == "=" || atom == "<"
-					|| atom == "<=") {
-				
-				Cons cons = (Cons)rhs;
-				ArrayList<B3Expr> params = new ArrayList<B3Expr>();
-				
-				params.add(new B3Val(new B3Prim(atom)));
-				params.add(cons.getLhs().desugarB3Expr());
-				params.add(cons.getRhs().desugarB3Expr());
-				
-				return new B3App(params);	//cons(*, cons(e, e)) 
-				
-			}else if (atom == "let") {
-				Cons cons = (Cons)rhs;
-				ArrayList<B3Expr> params = new ArrayList<B3Expr>();
-				B3Expr lambdaExpr = cons.getRhs().desugarB3Expr();
-				
-				Cons subCons = (Cons)cons.getLhs();
-				B3Var lamdaVar = (B3Var)(subCons.getLhs().desugarB3Expr());
-				B3Expr varVal = (B3Expr)(subCons.getRhs().desugarB3Expr());
-				
-				params.add(new B3Lambda(lamdaVar, lambdaExpr));
-				params.add(varVal);
-				
-				return new B3App(params);
-				
-				
-			}
-			
-		}else {	//Lambda application
-			Cons cons = (Cons)rhs;
-			
-			ArrayList<B3Expr> params = new ArrayList<B3Expr>();
-			params.add(lhs.desugarB3Expr());
-			
-			if(rhs.getType() == type.EMPTY) {
-				
-				
-			}else if(rhs.getType() == type.ATOM) {
-				params.add(rhs.desugarB3Expr());
-			
-			}else {
-				Atom subAtom2 = (Atom)cons.getLhs();
-				
-				if(subAtom2.getAtom().charAt(0) != '0' && subAtom2.getAtom().charAt(0) != '1' && subAtom2.getAtom().charAt(0) != '2' && 
-				   subAtom2.getAtom().charAt(0) != '3' && subAtom2.getAtom().charAt(0) != '4' && subAtom2.getAtom().charAt(0) != '5' && 
-				   subAtom2.getAtom().charAt(0) != '6' && subAtom2.getAtom().charAt(0) != '7' && subAtom2.getAtom().charAt(0) != '8' && 
-				   subAtom2.getAtom().charAt(0) != '9' && subAtom2.getAtom() != "true"        && subAtom2.getAtom() != "false") {
 					
-					params.add(cons.desugarB3Expr());
-					
-				}else {
-				
-					while(true) {
-						params.add(cons.lhs.desugarB3Expr());
+					while(keepGoing) {
+						vars.add((B3Var)(cons.getLhs().desugarB3Expr()));
 						
-						if(cons.rhs.getType() == type.ATOM) {
-							params.add(cons.rhs.desugarB3Expr());
+						switch(cons.getRhs().getType()) {
+							case ATOM:
+								vars.add((B3Var)(cons.getRhs().desugarB3Expr()));
+								keepGoing = false;
+								break;
+								
+							case CONS:
+								cons = (Cons)cons.getRhs();
+								break;
+								
+							case EMPTY:
+								keepGoing = false;
+								break;
+								
+							default:
+								break;
+								
+						}
+					
+					}
+					
+					return new B3Val(new B3Lambda(vars, expr));
+					
+				}else if(atom == "+" || atom == "*" || atom == "/" || atom == "-" 
+						|| atom == ">" || atom == ">=" || atom == "=" || atom == "<"
+						|| atom == "<=") {
+					
+					Cons cons = (Cons)rhs;
+					ArrayList<B3Expr> params = new ArrayList<B3Expr>();
+					
+					params.add(new B3Val(new B3Prim(atom)));
+					params.add(cons.getLhs().desugarB3Expr());
+					params.add(cons.getRhs().desugarB3Expr());
+					
+					return new B3App(params);	//cons(*, cons(e, e)) 
+					
+				}else if (atom == "let") {
+					Cons cons = (Cons)rhs;
+					ArrayList<B3Expr> params = new ArrayList<B3Expr>();
+					B3Expr lambdaExpr = cons.getRhs().desugarB3Expr();
+					
+					Cons subCons = (Cons)cons.getLhs();
+					B3Var lamdaVar = (B3Var)(subCons.getLhs().desugarB3Expr());
+					B3Expr varVal = (B3Expr)(subCons.getRhs().desugarB3Expr());
+					
+					params.add(new B3Val(new B3Lambda(lamdaVar, lambdaExpr)));
+					params.add(varVal);
+					
+					return new B3App(params);
+					
+					
+				}else {	//App with variable that contains Lambda
+					ArrayList<B3Expr> params = new ArrayList<B3Expr>();
+					params.add(lhs.desugarB3Expr());
+					
+					switch(rhs.getType()) {
+						case EMPTY:
+								break;
+							
+						case ATOM: 
+							params.add(rhs.desugarB3Expr());
+							break;
+						
+						case CONS:
+							Cons cons = (Cons)rhs;
+							Atom subAtom2 = (Atom)cons.getLhs();
+							
+							if(subAtom2.getAtom().charAt(0) != '0' && subAtom2.getAtom().charAt(0) != '1' && subAtom2.getAtom().charAt(0) != '2' && 
+							   subAtom2.getAtom().charAt(0) != '3' && subAtom2.getAtom().charAt(0) != '4' && subAtom2.getAtom().charAt(0) != '5' && 
+							   subAtom2.getAtom().charAt(0) != '6' && subAtom2.getAtom().charAt(0) != '7' && subAtom2.getAtom().charAt(0) != '8' && 
+							   subAtom2.getAtom().charAt(0) != '9' && subAtom2.getAtom() != "true"        && subAtom2.getAtom() != "false") {
+								
+								params.add(cons.desugarB3Expr());
+								
+							}else {
+								boolean keepGoing = true;
+								
+								while(keepGoing) {
+									params.add(cons.lhs.desugarB3Expr());
+									
+									switch(cons.rhs.getType()) {
+										case ATOM:
+											params.add(cons.rhs.desugarB3Expr());
+											keepGoing = false;
+											break;
+											
+										case CONS:
+											Cons subCons = (Cons)cons.rhs;
+											
+											if(subCons.getLhs().getType() == type.ATOM) {
+												Atom subAtom1 = (Atom)subCons.getLhs();
+												
+												if(subAtom1.getAtom().charAt(0) != '0' && subAtom1.getAtom().charAt(0) != '1' && subAtom1.getAtom().charAt(0) != '2' && 
+												   subAtom1.getAtom().charAt(0) != '3' && subAtom1.getAtom().charAt(0) != '4' && subAtom1.getAtom().charAt(0) != '5' && 
+												   subAtom1.getAtom().charAt(0) != '6' && subAtom1.getAtom().charAt(0) != '7' && subAtom1.getAtom().charAt(0) != '8' && 
+												   subAtom1.getAtom().charAt(0) != '9' && subAtom1.getAtom() != "true"        && subAtom1.getAtom() != "false") {
+													
+													params.add(cons.rhs.desugarB3Expr());
+													keepGoing = false;
+													
+												}
+												
+											}
+											
+											break;
+											
+										default:
+											keepGoing = false;
+											break;
+										
+									}
+									
+									if(keepGoing) {
+										cons = (Cons)cons.rhs;
+										
+									}
+									
+								}
+
+							}
+							
 							break;
 							
-						}else if(cons.rhs.getType() == type.CONS) {
-							Cons subCons = (Cons)cons.rhs;
+						default:
+							break;
+						
+					}
+					
+					return new B3App(params);
+					
+				}
+				
+			case CONS:	//Lambda app
+				ArrayList<B3Expr> params = new ArrayList<B3Expr>();
+				params.add(lhs.desugarB3Expr());
+				
+				switch(rhs.getType()) {
+					case EMPTY:
+							break;
+						
+					case ATOM: 
+						params.add(rhs.desugarB3Expr());
+						break;
+					
+					case CONS:
+						Cons cons = (Cons)rhs;
+						Atom subAtom2 = (Atom)cons.getLhs();
+						
+						if(subAtom2.getAtom().charAt(0) != '0' && subAtom2.getAtom().charAt(0) != '1' && subAtom2.getAtom().charAt(0) != '2' && 
+						   subAtom2.getAtom().charAt(0) != '3' && subAtom2.getAtom().charAt(0) != '4' && subAtom2.getAtom().charAt(0) != '5' && 
+						   subAtom2.getAtom().charAt(0) != '6' && subAtom2.getAtom().charAt(0) != '7' && subAtom2.getAtom().charAt(0) != '8' && 
+						   subAtom2.getAtom().charAt(0) != '9' && subAtom2.getAtom() != "true"        && subAtom2.getAtom() != "false") {
 							
-							if(subCons.getLhs().getType() == type.ATOM) {
-								Atom subAtom1 = (Atom)subCons.getLhs();
+							params.add(cons.desugarB3Expr());
+							
+						}else {
+							boolean keepGoing = true;
+							
+							while(keepGoing) {
+								params.add(cons.lhs.desugarB3Expr());
 								
-								if(subAtom1.getAtom().charAt(0) != '0' && subAtom1.getAtom().charAt(0) != '1' && subAtom1.getAtom().charAt(0) != '2' && 
-								   subAtom1.getAtom().charAt(0) != '3' && subAtom1.getAtom().charAt(0) != '4' && subAtom1.getAtom().charAt(0) != '5' && 
-								   subAtom1.getAtom().charAt(0) != '6' && subAtom1.getAtom().charAt(0) != '7' && subAtom1.getAtom().charAt(0) != '8' && 
-								   subAtom1.getAtom().charAt(0) != '9' && subAtom1.getAtom() != "true"        && subAtom1.getAtom() != "false") {
+								switch(cons.rhs.getType()) {
+									case ATOM:
+										params.add(cons.rhs.desugarB3Expr());
+										keepGoing = false;
+										break;
+										
+									case CONS:
+										Cons subCons = (Cons)cons.rhs;
+										
+										if(subCons.getLhs().getType() == type.ATOM) {
+											Atom subAtom1 = (Atom)subCons.getLhs();
+											
+											if(subAtom1.getAtom().charAt(0) != '0' && subAtom1.getAtom().charAt(0) != '1' && subAtom1.getAtom().charAt(0) != '2' && 
+											   subAtom1.getAtom().charAt(0) != '3' && subAtom1.getAtom().charAt(0) != '4' && subAtom1.getAtom().charAt(0) != '5' && 
+											   subAtom1.getAtom().charAt(0) != '6' && subAtom1.getAtom().charAt(0) != '7' && subAtom1.getAtom().charAt(0) != '8' && 
+											   subAtom1.getAtom().charAt(0) != '9' && subAtom1.getAtom() != "true"        && subAtom1.getAtom() != "false") {
+												
+												params.add(cons.rhs.desugarB3Expr());
+												keepGoing = false;
+												
+											}
+											
+										}
+										
+										break;
+										
+									default:
+										keepGoing = false;
+										break;
 									
-									params.add(cons.rhs.desugarB3Expr());
-									break;
+								}
+								
+								if(keepGoing) {
+									cons = (Cons)cons.rhs;
 									
 								}
 								
 							}
-							
+
 						}
 						
-						cons = (Cons)cons.rhs;
+						break;
 						
-					}
-				
+					default:
+						break;
+					
 				}
 				
-			}
-			
-			return new B3App(params);
+				return new B3App(params);
+				
+			default:
+				break;
 			
 		}
 		

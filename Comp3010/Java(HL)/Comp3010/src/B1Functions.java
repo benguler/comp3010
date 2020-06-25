@@ -8,7 +8,7 @@ public class B1Functions {
 		
 	}
 	
-	public B1Expr plug(Context context, B1Expr expr) {
+	public static B1Expr plug(Context context, B1Expr expr) {
 		switch(context.getContextType()) {
 			case EMPTY:
 				return expr;								//[] x e -> e
@@ -41,7 +41,7 @@ public class B1Functions {
 	}
 	
 	//Given an expression return a context and a redex
-	public Pair findRedex(B1Expr expr){
+	public static Pair findRedex(B1Expr expr){
 		Pair pair = new Pair();	//[context, redex]
 		boolean hasRedEx = false;
 		
@@ -133,7 +133,7 @@ public class B1Functions {
 	}
 	
 	//Small step interpreter
-	public B1Expr smallStep(B1Expr expr) {
+	public static B1Expr smallStep(B1Expr expr) {
 		Pair pair = findRedex(expr);		//Find redex
 		
 		if(pair == null) {						//If there is no redex in expr
@@ -147,7 +147,7 @@ public class B1Functions {
 	
 	//Return c equivalent of expr constructor
 	
-	public String toC(B1Expr expr) {
+	public static String toC(B1Expr expr) {
 		switch(expr.getExprType()) {
 			case IF:
 				B1If ifExpr = (B1If)expr;
@@ -201,7 +201,7 @@ public class B1Functions {
 	
 	//Emits B1 programs written in java to B1 programs written in c
 	
-	public void emit(B1Expr expr) {
+	public static void emit(B1Expr expr) {
 		try {
 		      File myObj = new File("../../C(LL)/B1/main.cpp");
 		      if (myObj.createNewFile()) {
@@ -223,7 +223,7 @@ public class B1Functions {
 		      myWriter.write("#include <iostream>\n#include \"B1.h\"\n\n");
 		      myWriter.write("int main( int argc, char** argv ) {\n");
 		      
-		      myWriter.write("	" + this.toC(expr) + ";\n\n");
+		      myWriter.write("	" + toC(expr) + ";\n\n");
 		      
 		      myWriter.write("	return 0;\n\n}");
 		      myWriter.close();
@@ -239,7 +239,7 @@ public class B1Functions {
 
 
 
-	public void connectTestSuite(B1Expr... exprs) {
+	public static void connectTestSuite(B1Expr... exprs) {
 		try {
 		      File myObj = new File("../../C(LL)/B1/main.cpp");
 		      if (myObj.createNewFile()) {
@@ -262,7 +262,7 @@ public class B1Functions {
 		      myWriter.write("int main( int argc, char** argv ) {\n");
 		      
 		      for(B1Expr expr : exprs) {
-		    	  myWriter.write("	cout<<\"" +expr.pPrint() + " == \"<<valEval(ck0(" + this.toC(expr) + "))<<endl;\n");
+		    	  myWriter.write("	cout<<\"" +expr.pPrint() + " == \"<<valEval(ck0(" + toC(expr) + "))<<endl;\n");
 		    	  
 		      }
 		      

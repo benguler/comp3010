@@ -130,9 +130,9 @@ class TestSuite {
 		
 		//emit tests
 		
-		b1Functions.emit(b1if3.desugarB1());
+		B1Functions.emit(b1if3.desugarB1());
 		
-		b1Functions.connectTestSuite(b1if1.desugarB1(), 
+		B1Functions.connectTestSuite(b1if1.desugarB1(), 
 									 b1if2.desugarB1(),
 									 b1if3.desugarB1(),
 									 b1App1.desugarB1(),
@@ -146,8 +146,6 @@ class TestSuite {
 									 b1App9.desugarB1());
 	
 		//B2 Desugar Tests 
-		
-		B2Functions b2 = new B2Functions();
 
 		FuncMap fm = new FuncMap();
 		
@@ -184,14 +182,14 @@ class TestSuite {
 						new Cons(new Atom("x"), new Cons(new Atom("UNTILNI"), new Cons(new Atom("-"), new Cons(new Atom("x"), new Atom("1"))))))))));
 		
 	
-		b2.define(b2Func1.desugarB2Def(), fm);
-		b2.define(b2Func2.desugarB2Def(), fm);
-		b2.define(b2Func3.desugarB2Def(), fm);
-		b2.define(b2Func4.desugarB2Def(), fm);
-		b2.define(b2Func5.desugarB2Def(), fm);
-		b2.define(b2Func6.desugarB2Def(), fm);
-		b2.define(b2Func7.desugarB2Def(), fm);
-		b2.define(b2Func8.desugarB2Def(), fm);
+		B2Functions.define(b2Func1.desugarB2Def(), fm);
+		B2Functions.define(b2Func2.desugarB2Def(), fm);
+		B2Functions.define(b2Func3.desugarB2Def(), fm);
+		B2Functions.define(b2Func4.desugarB2Def(), fm);
+		B2Functions.define(b2Func5.desugarB2Def(), fm);
+		B2Functions.define(b2Func6.desugarB2Def(), fm);
+		B2Functions.define(b2Func7.desugarB2Def(), fm);
+		B2Functions.define(b2Func8.desugarB2Def(), fm);
 		
 		Cons b2App1 = new Cons(new Atom("DOUBLE"), new Cons(new Atom("+"), new Cons(new Atom("1"), new Atom("1"))));
 		Cons b2App2 = new Cons(new Atom("DIFFERENCE"), new Cons(new Atom("8"), new Atom("3")));
@@ -209,18 +207,41 @@ class TestSuite {
 		//Cons b2App5 = new Cons(new Atom("FIB"), new Atom("4"));
 		//Cons b2App6 = new Cons(new Atom("FIB"), new Atom("5"));
 		
-		assertEquals(b2.bigStep(b2App1.desugarB2Expr(), new VarMap(), fm), 4,  "DOUBLE");
-		assertEquals(b2.bigStep(b2App2.desugarB2Expr(), new VarMap(), fm), 5,  "DIFFERENCE");
-		assertEquals(b2.bigStep(b2App3.desugarB2Expr(), new VarMap(), fm), 6,  "RECUR");
-		assertEquals(b2.bigStep(b2App4.desugarB2Expr(), new VarMap(), fm), 21, "FIB");
-		assertEquals(b2.bigStep(b2App5.desugarB2Expr(), new VarMap(), fm), 5,  "FIVE");
-		assertEquals(b2.bigStep(b2App6.desugarB2Expr(), new VarMap(), fm), 8,  "QUADRUPLE");
-		assertEquals(b2.bigStep(b2App7.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNI");
-		assertEquals(b2.bigStep(b2App8.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNII");
+		assertEquals(B2Functions.bigStep(b2App1.desugarB2Expr(), new VarMap(), fm), 4,  "DOUBLE");
+		assertEquals(B2Functions.bigStep(b2App2.desugarB2Expr(), new VarMap(), fm), 5,  "DIFFERENCE");
+		assertEquals(B2Functions.bigStep(b2App3.desugarB2Expr(), new VarMap(), fm), 6,  "RECUR");
+		assertEquals(B2Functions.bigStep(b2App4.desugarB2Expr(), new VarMap(), fm), 21, "FIB");
+		assertEquals(B2Functions.bigStep(b2App5.desugarB2Expr(), new VarMap(), fm), 5,  "FIVE");
+		assertEquals(B2Functions.bigStep(b2App6.desugarB2Expr(), new VarMap(), fm), 8,  "QUADRUPLE");
+		assertEquals(B2Functions.bigStep(b2App7.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNI");
+		assertEquals(B2Functions.bigStep(b2App8.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNII");
 		
 		//B2 Desugar Tests 
 		
-		Cons b3Lamb1 = new Cons(new Cons(new Atom("lambda"), new Cons(new Atom("x"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("1"))))), new Atom("1"));
+		Cons b3Lamb1 = new Cons(new Cons(new Atom("lambda"), new Cons(new Atom("x"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("1"))))), new Atom("5"));
+		Cons b3Lamb2 = new Cons(new Atom("let"), new Cons(new Cons(new Atom ("x"), new Atom("8")), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("2")))));
+		Cons b3Lamb3 = new Cons(new Atom("let"), new Cons(new Cons(new Atom ("x"), new Atom("8")), new Cons(new Atom("let"), 
+								new Cons(new Cons(new Atom ("y"), new Atom("8")), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("y")))))));
+		Cons b3Lamb4 = new Cons(new Atom("let"), 
+								new Cons(new Cons(new Atom ("x"), new Atom("8")), 
+						new Cons(new Atom("let"), 
+								new Cons(new Cons(new Atom ("x"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("1")))), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("x")))))));
+		
+		Cons b3Lamb5 = new Cons(new Atom("let"), 
+								new Cons(new Cons(new Atom ("f"), new Cons(new Atom("let"), 
+																	new Cons(new Cons(new Atom ("x"), new Atom("1")), new Cons(new Atom("lambda"), new Cons(new Atom("y"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("y")))))))), 
+										new Cons(new Atom("f"), new Atom("3"))));
+		
+		Cons b3Lamb6 = new Cons(new Cons(new Atom("lambda"), new Cons(new Cons(new Atom("x"), new Atom("y")), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("y"))))), new Cons(new Atom("5"), new Atom("3")));
+										
+		
+		B3Functions.connectTestSuite(b3Lamb1.desugarB3Expr(), 
+								  	 b3Lamb2.desugarB3Expr(),
+								  	 b3Lamb3.desugarB3Expr(),
+								  	 b3Lamb4.desugarB3Expr(),
+								  	 b3Lamb5.desugarB3Expr(),
+								  	 b3Lamb6.desugarB3Expr()
+								  	 );
 		
 	}
 

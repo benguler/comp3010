@@ -6,7 +6,7 @@ public class B2Functions {
 		
 	}
 	
-	public int bigStep(B2Expr expr, VarMap vm, FuncMap fm) {
+	public static int bigStep(B2Expr expr, VarMap vm, FuncMap fm) {
 		switch(expr.getType()) {
 			case IF:
 				B2If ifExpr = (B2If) expr;
@@ -60,12 +60,12 @@ public class B2Functions {
 		
 	}
 	
-	public void define(B2Def def, FuncMap fm) {
+	public static void define(B2Def def, FuncMap fm) {
 		fm.setFunc(def.getFunc(), def);
 		
 	}
 	
-	public int delta(B2Expr op, ArrayList<B2Expr> exprs, VarMap vm, FuncMap fm) {
+	public static int delta(B2Expr op, ArrayList<B2Expr> exprs, VarMap vm, FuncMap fm) {
 		
 		B2Val valExpr = (B2Val)op;
 		
