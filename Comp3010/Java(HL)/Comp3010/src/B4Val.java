@@ -1,4 +1,4 @@
-public class B3Val implements B3Expr {
+public class B4Val implements B4Expr {
 	public enum ValType{
 		NUM,
 		BOOL,
@@ -10,31 +10,31 @@ public class B3Val implements B3Expr {
 	
 	private int num;
 	private boolean bool;
-	private B3Prim prim;
-	private B3Lambda lamb;
+	private B4Prim prim;
+	private B4Lambda lamb;
 	
-	public B3Val(int num) {			//v := n
+	public B4Val(int num) {			//v := n
 		this.num = num;
 		
 		valType = ValType.NUM;
 		
 	}
 	
-	public B3Val(boolean bool) { 	//v := bool
+	public B4Val(boolean bool) { 	//v := bool
 		this.bool = bool;
 		
 		valType = ValType.BOOL;
 		
 	}
 	
-	public B3Val(B3Prim prim) {		//v := prim
+	public B4Val(B4Prim prim) {		//v := prim
 		this.prim = prim;
 		
 		valType = ValType.PRIM;
 		
 	}
 	
-	public B3Val(B3Lambda lamb) {		//v := lambda
+	public B4Val(B4Lambda lamb) {		//v := lambda
 		this.lamb = lamb;
 		
 		valType = ValType.LAMB;
@@ -54,11 +54,11 @@ public class B3Val implements B3Expr {
 		return bool;
 	}
 
-	public B3Prim getPrim() {
+	public B4Prim getPrim() {
 		return prim;
 	}
 	
-	public B3Lambda getLamb() {
+	public B4Lambda getLamb() {
 		return lamb;
 	}
 

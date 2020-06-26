@@ -218,31 +218,45 @@ class TestSuite {
 		
 		//B2 Desugar Tests 
 		
-		Cons b3Lamb1 = new Cons(new Cons(new Atom("lambda"), new Cons(new Atom("x"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("1"))))), new Atom("5"));
-		Cons b3Lamb2 = new Cons(new Atom("let"), new Cons(new Cons(new Atom ("x"), new Atom("8")), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("2")))));
-		Cons b3Lamb3 = new Cons(new Atom("let"), new Cons(new Cons(new Atom ("x"), new Atom("8")), new Cons(new Atom("let"), 
+		Cons b3App1 = new Cons(new Cons(new Atom("lambda"), new Cons(new Atom("x"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("1"))))), new Atom("5"));
+		Cons b3App2 = new Cons(new Atom("let"), new Cons(new Cons(new Atom ("x"), new Atom("8")), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("2")))));
+		Cons b3App3 = new Cons(new Atom("let"), new Cons(new Cons(new Atom ("x"), new Atom("8")), new Cons(new Atom("let"), 
 								new Cons(new Cons(new Atom ("y"), new Atom("8")), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("y")))))));
-		Cons b3Lamb4 = new Cons(new Atom("let"), 
+		Cons b3App4 = new Cons(new Atom("let"), 
 								new Cons(new Cons(new Atom ("x"), new Atom("8")), 
 						new Cons(new Atom("let"), 
 								new Cons(new Cons(new Atom ("x"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("1")))), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("x")))))));
 		
-		Cons b3Lamb5 = new Cons(new Atom("let"), 
+		Cons b3App5 = new Cons(new Atom("let"), 
 								new Cons(new Cons(new Atom ("f"), new Cons(new Atom("let"), 
 																	new Cons(new Cons(new Atom ("x"), new Atom("1")), new Cons(new Atom("lambda"), new Cons(new Atom("y"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("y")))))))), 
 										new Cons(new Atom("f"), new Atom("3"))));
 		
-		Cons b3Lamb6 = new Cons(new Cons(new Atom("lambda"), new Cons(new Cons(new Atom("x"), new Atom("y")), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("y"))))), new Cons(new Atom("5"), new Atom("3")));
-										
+		Cons b3App6 = new Cons(new Cons(new Atom("lambda"), new Cons(new Cons(new Atom("x"), new Atom("y")), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("y"))))), new Cons(new Atom("5"), new Atom("3")));
 		
-		B3Functions.connectTestSuite(b3Lamb1.desugarB3Expr(), 
-								  	 b3Lamb2.desugarB3Expr(),
-								  	 b3Lamb3.desugarB3Expr(),
-								  	 b3Lamb4.desugarB3Expr(),
-								  	 b3Lamb5.desugarB3Expr(),
-								  	 b3Lamb6.desugarB3Expr()
+		B3Functions.connectTestSuite(b3App1.desugarB3Expr(), 
+								  	 b3App2.desugarB3Expr(),
+								  	 b3App3.desugarB3Expr(),
+								  	 b3App4.desugarB3Expr(),
+								  	 b3App5.desugarB3Expr(),
+								  	 b3App6.desugarB3Expr()
 								  	 );
 		
 	}
 
+	Atom a(String atom) {
+		return new Atom(atom);
+		
+	}
+	
+	Cons c(BSexpr sexpr1, BSexpr sexpr2) {
+		return new Cons(sexpr1, sexpr2);
+		
+	}
+	
+	Empty e() {
+		return new Empty();
+		
+	}
+	
 }
