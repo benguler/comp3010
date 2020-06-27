@@ -137,4 +137,10 @@ public class Atom implements BSexpr{
 	 
 	}
 
+	@Override
+	public B4Expr desugarB4Expr() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

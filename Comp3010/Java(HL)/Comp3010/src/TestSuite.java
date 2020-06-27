@@ -45,27 +45,27 @@ class TestSuite {
 		
 		//B0 Desugar Tests
 		
-		Atom val4 = new Atom("1");	//1
-		Atom val5 = new Atom("2");	//2
-		Atom val6 = new Atom("3");	//3
+		Atom val4 = a("1");	//1
+		Atom val5 = a("2");	//2
+		Atom val6 = a("3");	//3
 		
-		Cons add4 = new Cons(new Atom("+"), new Cons(new Atom("1"), new Atom("2")));	//1 + 2 = 3
-		Cons add5 = new Cons(new Atom("+"), new Cons(new Atom("2"), new Atom("3")));	//2 + 3 = 5
-		Cons add6 = new Cons(new Atom("+"), new Cons(new Atom("3"), new Atom("4")));	//3 + 4 = 7
+		Cons add4 = c(a("+"), c(a("1"), a("2")));	//1 + 2 = 3
+		Cons add5 = c(a("+"), c(a("2"), a("3")));	//2 + 3 = 5
+		Cons add6 = c(a("+"), c(a("3"), a("4")));	//3 + 4 = 7
 		
-		Cons mult4 = new Cons(new Atom("*"), new Cons(new Atom("1"), new Atom("2")));	//1 * 2 = 2
-		Cons mult5 = new Cons(new Atom("*"), new Cons(new Atom("2"), new Atom("3")));	//2 * 3 = 6
-		Cons mult6 = new Cons(new Atom("*"), new Cons(new Atom("3"), new Atom("4")));	//3 * 4 = 12
+		Cons mult4 = c(a("*"), c(a("1"), a("2")));	//1 * 2 = 2
+		Cons mult5 = c(a("*"), c(a("2"), a("3")));	//2 * 3 = 6
+		Cons mult6 = c(a("*"), c(a("3"), a("4")));	//3 * 4 = 12
 		
-		Cons mix4 = new Cons(new Atom("*"), 
-											new Cons(new Cons(new Atom("+"), 
-											new Cons(new Atom("1"), new Atom("2"))), new Atom("3")));	//(1 + 2) * 3 = 9
-		Cons mix5 = new Cons(new Atom("*"),
-					new Cons(new Cons(new Atom("+"), new Cons(new Atom("1"), new Atom("2"))),
-							 new Cons(new Atom("+"), new Cons(new Atom("2"), new Atom("2")))));			//(1 + 2) * (2 * 2) = 12
-		Cons mix6 = new Cons(new Atom("+"),
-					new Cons(new Cons(new Atom("*"), new Cons(new Atom("1"), new Atom("2"))),
-							 new Cons(new Atom("*"), new Cons(new Atom("3"), new Atom("4")))));			//(1 * 2) + (3 * 4) = 14
+		Cons mix4 = c(a("*"), 
+											c(c(a("+"), 
+											c(a("1"), a("2"))), a("3")));	//(1 + 2) * 3 = 9
+		Cons mix5 = c(a("*"),
+					c(c(a("+"), c(a("1"), a("2"))),
+							 c(a("+"), c(a("2"), a("2")))));			//(1 + 2) * (2 * 2) = 12
+		Cons mix6 = c(a("+"),
+					c(c(a("*"), c(a("1"), a("2"))),
+							 c(a("*"), c(a("3"), a("4")))));			//(1 * 2) + (3 * 4) = 14
 		
 		assertEquals(val4.desugar().interp(), 1 ," != 1");
 		assertEquals(val5.desugar().interp(), 2 ," != 2");
@@ -85,24 +85,24 @@ class TestSuite {
 		
 		//B1 Desugar Tests 
 		
-		Cons b1if1 = new Cons(new Atom("if"), new Cons(new Atom("true"), 
-							new Cons(new Atom("1"), new Atom("2"))));	//If true == true then 1, else 2
+		Cons b1if1 = c(a("if"), c(a("true"), 
+							c(a("1"), a("2"))));	//If true == true then 1, else 2
 		
-		Cons b1if2 = new Cons(new Atom("if"), new Cons(new Atom("false"), 
-				   		 	new Cons(new Atom("1"), new Atom("2"))));	//If false == true then 1, else 2
+		Cons b1if2 = c(a("if"), c(a("false"), 
+				   		 	c(a("1"), a("2"))));	//If false == true then 1, else 2
 		
-		Cons b1if3 = new Cons(new Atom("if"), new Cons(new Cons(new Atom("<"), new Cons(new Atom("1"), new Atom("2"))), 
-				   			new Cons(new Atom("1"), new Atom("2"))));	//If 1 < 2 then 1, else 2
+		Cons b1if3 = c(a("if"), c(c(a("<"), c(a("1"), a("2"))), 
+				   			c(a("1"), a("2"))));	//If 1 < 2 then 1, else 2
 		
-		Cons b1App1 = new Cons(new Atom("+"), new Cons(new Atom("1"), new Atom("1")));	//1 + 1 = 2
-		Cons b1App2 = new Cons(new Atom("*"), new Cons(new Atom("2"), new Atom("2")));	//2 * 2 = 4
-		Cons b1App3 = new Cons(new Atom("-"), new Cons(new Atom("2"), new Atom("1")));	//2 - 1 = 1
-		Cons b1App4 = new Cons(new Atom("/"), new Cons(new Atom("4"), new Atom("2")));	//4 / 2 = 2
-		Cons b1App5 = new Cons(new Atom("<"), new Cons(new Atom("3"), new Atom("2")));	//3 < 2 = 0  (false)
-		Cons b1App6 = new Cons(new Atom("<="), new Cons(new Atom("3"), new Atom("3")));	//3 <= 3 = 1 (true)
-		Cons b1App7 = new Cons(new Atom("="), new Cons(new Atom("3"), new Atom("3")));	//3 == 3 = 1 (true)
-		Cons b1App8 = new Cons(new Atom(">"), new Cons(new Atom("3"), new Atom("2")));	//3 > 2 = 1  (true)
-		Cons b1App9 = new Cons(new Atom(">="), new Cons(new Atom("3"), new Atom("5")));	//3 >= 5 = 0 (false)
+		Cons b1App1 = c(a("+"), c(a("1"), a("1")));	//1 + 1 = 2
+		Cons b1App2 = c(a("*"), c(a("2"), a("2")));	//2 * 2 = 4
+		Cons b1App3 = c(a("-"), c(a("2"), a("1")));	//2 - 1 = 1
+		Cons b1App4 = c(a("/"), c(a("4"), a("2")));	//4 / 2 = 2
+		Cons b1App5 = c(a("<"), c(a("3"), a("2")));	//3 < 2 = 0  (false)
+		Cons b1App6 = c(a("<="), c(a("3"), a("3")));	//3 <= 3 = 1 (true)
+		Cons b1App7 = c(a("="), c(a("3"), a("3")));	//3 == 3 = 1 (true)
+		Cons b1App8 = c(a(">"), c(a("3"), a("2")));	//3 > 2 = 1  (true)
+		Cons b1App9 = c(a(">="), c(a("3"), a("5")));	//3 >= 5 = 0 (false)
 		
 		
 		assertEquals(b1if1.desugarB1().interp(), 1 ," != 1");
@@ -149,37 +149,37 @@ class TestSuite {
 
 		FuncMap fm = new FuncMap();
 		
-		Cons b2Func1 = new Cons(new Atom("def"), new Cons(new Atom("DOUBLE"), new Cons(new Atom("x"),
-								new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("x"))))));
+		Cons b2Func1 = c(a("def"), c(a("DOUBLE"), c(a("x"),
+								c(a("+"), c(a("x"), a("x"))))));
 		
-		Cons b2Func2 = new Cons(new Atom("def"), new Cons(new Atom("DIFFERENCE"), new Cons(new Cons(new Atom("x"), new Atom("y")),
-								new Cons(new Atom("if"), new Cons(new Cons(new Atom(">"), new Cons(new Atom("x"), new Atom("y"))),
-										new Cons(new Cons(new Atom("-"), new Cons(new Atom("x"), new Atom("y"))), 
-												 new Cons(new Atom("-"), new Cons(new Atom("y"), new Atom("x")))))))));
+		Cons b2Func2 = c(a("def"), c(a("DIFFERENCE"), c(c(a("x"), a("y")),
+								c(a("if"), c(c(a(">"), c(a("x"), a("y"))),
+										c(c(a("-"), c(a("x"), a("y"))), 
+												 c(a("-"), c(a("y"), a("x")))))))));
 		
-		Cons b2Func3 = new Cons(new Atom("def"), new Cons(new Atom("RECUR"), new Cons(new Atom("r"), 
-			  	new Cons(new Atom("if"), new Cons(new Cons(new Atom("<="), new Cons(new Atom("r"), new Atom("6"))),
-			  			new Cons(new Atom("r"),
-			  					new Cons(new Atom("RECUR"), new Cons(new Atom("-"), new Cons(new Atom("r"), new Atom("1"))))))))));
+		Cons b2Func3 = c(a("def"), c(a("RECUR"), c(a("r"), 
+			  	c(a("if"), c(c(a("<="), c(a("r"), a("6"))),
+			  			c(a("r"),
+			  					c(a("RECUR"), c(a("-"), c(a("r"), a("1"))))))))));
 		
-		Cons b2Func4 = new Cons(new Atom("def"), new Cons(new Atom("FIB"), new Cons(new Atom("n"), 
-							  	new Cons(new Atom("if"), new Cons(new Cons(new Atom("<="), new Cons(new Atom("n"), new Atom("1"))),
-							  			new Cons(new Atom("n"),
-							  					 new Cons(new Atom("+"), new Cons(new Cons(new Atom("FIB"), new Cons(new Atom("-"), new Cons(new Atom("n"), new Atom("1")))),
-							  							 				 		  new Cons(new Atom("FIB"), new Cons(new Atom("-"), new Cons(new Atom("n"), new Atom("2"))))))))))));
+		Cons b2Func4 = c(a("def"), c(a("FIB"), c(a("n"), 
+							  	c(a("if"), c(c(a("<="), c(a("n"), a("1"))),
+							  			c(a("n"),
+							  					 c(a("+"), c(c(a("FIB"), c(a("-"), c(a("n"), a("1")))),
+							  							 				 		  c(a("FIB"), c(a("-"), c(a("n"), a("2"))))))))))));
 		
-		Cons b2Func5 = new Cons(new Atom("def"), new Cons(new Atom("FIVE"), new Cons(new Empty(), new Atom("5"))));
+		Cons b2Func5 = c(a("def"), c(a("FIVE"), c(e(), a("5"))));
 		
-		Cons b2Func6 = new Cons(new Atom("def"), new Cons(new Atom("QUADRUPLE"), new Cons(new Atom("q"),
-				new Cons(new Atom("DOUBLE"), new Cons(new Atom("DOUBLE"), new Atom("q"))))));
+		Cons b2Func6 = c(a("def"), c(a("QUADRUPLE"), c(a("q"),
+				c(a("DOUBLE"), c(a("DOUBLE"), a("q"))))));
 		
-		Cons b2Func7 = new Cons(new Atom("def"), new Cons(new Atom("UNTILNI"), new Cons(new Atom("x"),
-								new Cons(new Atom("if"), new Cons(new Cons(new Atom("<"), new Cons(new Atom("x"), new Atom("0"))),
-										new Cons(new Atom("x"), new Cons(new Atom("UNTILNII"),new Cons(new Atom("-"), new Cons(new Atom("x"), new Atom("1"))))))))));
+		Cons b2Func7 = c(a("def"), c(a("UNTILNI"), c(a("x"),
+								c(a("if"), c(c(a("<"), c(a("x"), a("0"))),
+										c(a("x"), c(a("UNTILNII"),c(a("-"), c(a("x"), a("1"))))))))));
 		
-		Cons b2Func8 = new Cons(new Atom("def"), new Cons(new Atom("UNTILNII"), new Cons(new Atom("x"),
-				new Cons(new Atom("if"), new Cons(new Cons(new Atom("<"), new Cons(new Atom("x"), new Atom("0"))),
-						new Cons(new Atom("x"), new Cons(new Atom("UNTILNI"), new Cons(new Atom("-"), new Cons(new Atom("x"), new Atom("1"))))))))));
+		Cons b2Func8 = c(a("def"), c(a("UNTILNII"), c(a("x"),
+				c(a("if"), c(c(a("<"), c(a("x"), a("0"))),
+						c(a("x"), c(a("UNTILNI"), c(a("-"), c(a("x"), a("1"))))))))));
 		
 	
 		B2Functions.define(b2Func1.desugarB2Def(), fm);
@@ -191,21 +191,14 @@ class TestSuite {
 		B2Functions.define(b2Func7.desugarB2Def(), fm);
 		B2Functions.define(b2Func8.desugarB2Def(), fm);
 		
-		Cons b2App1 = new Cons(new Atom("DOUBLE"), new Cons(new Atom("+"), new Cons(new Atom("1"), new Atom("1"))));
-		Cons b2App2 = new Cons(new Atom("DIFFERENCE"), new Cons(new Atom("8"), new Atom("3")));
-		Cons b2App3 = new Cons(new Atom("RECUR"), new Atom("13"));
-		Cons b2App4 = new Cons(new Atom("FIB"), new Atom("8"));
-		Cons b2App5 = new Cons(new Atom("FIVE"), new Empty());
-		Cons b2App6 = new Cons(new Atom("QUADRUPLE"), new Atom("2"));
-		Cons b2App7 = new Cons(new Atom("UNTILNI"), new Atom("2"));
-		Cons b2App8 = new Cons(new Atom("UNTILNI"), new Atom("7"));
-		
-		//Cons b2App1 = new Cons(new Atom("FIB"), new Atom("0"));
-		//Cons b2App2 = new Cons(new Atom("FIB"), new Atom("1"));
-		//Cons b2App3 = new Cons(new Atom("FIB"), new Atom("2"));
-		//Cons b2App4 = new Cons(new Atom("FIB"), new Atom("3"));
-		//Cons b2App5 = new Cons(new Atom("FIB"), new Atom("4"));
-		//Cons b2App6 = new Cons(new Atom("FIB"), new Atom("5"));
+		Cons b2App1 = c(a("DOUBLE"), c(a("+"), c(a("1"), a("1"))));
+		Cons b2App2 = c(a("DIFFERENCE"), c( c(a("DOUBLE"), a("2")), a("9")));
+		Cons b2App3 = c(a("RECUR"), a("13"));
+		Cons b2App4 = c(a("FIB"), a("8"));
+		Cons b2App5 = c(a("FIVE"), e());
+		Cons b2App6 = c(a("QUADRUPLE"), a("2"));
+		Cons b2App7 = c(a("UNTILNI"), a("2"));
+		Cons b2App8 = c(a("UNTILNI"), a("7"));
 		
 		assertEquals(B2Functions.bigStep(b2App1.desugarB2Expr(), new VarMap(), fm), 4,  "DOUBLE");
 		assertEquals(B2Functions.bigStep(b2App2.desugarB2Expr(), new VarMap(), fm), 5,  "DIFFERENCE");
@@ -216,23 +209,23 @@ class TestSuite {
 		assertEquals(B2Functions.bigStep(b2App7.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNI");
 		assertEquals(B2Functions.bigStep(b2App8.desugarB2Expr(), new VarMap(), fm), -1, "UNTILNII");
 		
-		//B2 Desugar Tests 
+		//B3 Desugar Tests 
 		
-		Cons b3App1 = new Cons(new Cons(new Atom("lambda"), new Cons(new Atom("x"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("1"))))), new Atom("5"));
-		Cons b3App2 = new Cons(new Atom("let"), new Cons(new Cons(new Atom ("x"), new Atom("8")), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("2")))));
-		Cons b3App3 = new Cons(new Atom("let"), new Cons(new Cons(new Atom ("x"), new Atom("8")), new Cons(new Atom("let"), 
-								new Cons(new Cons(new Atom ("y"), new Atom("8")), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("y")))))));
-		Cons b3App4 = new Cons(new Atom("let"), 
-								new Cons(new Cons(new Atom ("x"), new Atom("8")), 
-						new Cons(new Atom("let"), 
-								new Cons(new Cons(new Atom ("x"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("1")))), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("x")))))));
+		Cons b3App1 = c(c(a("lambda"), c(a("x"), c(a("+"), c(a("x"), a("1"))))), a("5"));
+		Cons b3App2 = c(a("let"), c(c(a ("x"), a("8")), c(a("+"), c(a("x"), a("2")))));
+		Cons b3App3 = c(a("let"), c(c(a ("x"), a("8")), c(a("let"), 
+								c(c(a ("y"), a("8")), c(a("+"), c(a("x"), a("y")))))));
+		Cons b3App4 = c(a("let"), 
+								c(c(a ("x"), a("8")), 
+						c(a("let"), 
+								c(c(a ("x"), c(a("+"), c(a("x"), a("1")))), c(a("+"), c(a("x"), a("x")))))));
 		
-		Cons b3App5 = new Cons(new Atom("let"), 
-								new Cons(new Cons(new Atom ("f"), new Cons(new Atom("let"), 
-																	new Cons(new Cons(new Atom ("x"), new Atom("1")), new Cons(new Atom("lambda"), new Cons(new Atom("y"), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("y")))))))), 
-										new Cons(new Atom("f"), new Atom("3"))));
+		Cons b3App5 = c(a("let"), 
+								c(c(a ("f"), c(a("let"), 
+																	c(c(a ("x"), a("1")), c(a("lambda"), c(a("y"), c(a("+"), c(a("x"), a("y")))))))), 
+										c(a("f"), a("3"))));
 		
-		Cons b3App6 = new Cons(new Cons(new Atom("lambda"), new Cons(new Cons(new Atom("x"), new Atom("y")), new Cons(new Atom("+"), new Cons(new Atom("x"), new Atom("y"))))), new Cons(new Atom("5"), new Atom("3")));
+		Cons b3App6 = c(c(a("lambda"), c(c(a("x"), a("y")), c(a("+"), c(a("x"), a("y"))))), c(a("5"), a("3")));
 		
 		B3Functions.connectTestSuite(b3App1.desugarB3Expr(), 
 								  	 b3App2.desugarB3Expr(),

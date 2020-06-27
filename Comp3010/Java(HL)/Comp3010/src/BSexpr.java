@@ -16,6 +16,8 @@ public interface BSexpr {
 	
 	public B3Expr desugarB3Expr();
 	
+	public B4Expr desugarB4Expr();
+	
 	public type getType();
 	
 }

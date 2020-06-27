@@ -4,21 +4,21 @@ public class B4Lambda implements B4Expr{
 
 	private ArrayList<B4Var> vars;
 	private B4Expr expr;
-	private B4Var var;
+	private B4Var recName;
 	
-	public B4Lambda(B4Var var, ArrayList<B4Var> vars, B4Expr expr) {
+	public B4Lambda(B4Var recName, ArrayList<B4Var> vars, B4Expr expr) {
 		super();
 		this.vars = vars;
 		this.expr = expr;
-		this.var = var;
+		this.recName = recName;
 	}
 	
-	public B4Lambda(B4Var var, B4Var var0, B4Expr expr) {
+	public B4Lambda(B4Var recName, B4Var var0, B4Expr expr) {
 		super();
 		this.vars = new ArrayList<B4Var>();
 		this.vars.add(var0);
 		this.expr = expr;
-		this.var = var;
+		this.recName= recName;
 	}
 	
 	

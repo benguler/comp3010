@@ -41,4 +41,10 @@ public class Empty implements BSexpr{
 		return null;
 	}
 
+	@Override
+	public B4Expr desugarB4Expr() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
