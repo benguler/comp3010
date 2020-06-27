@@ -221,8 +221,8 @@ struct B1Expr *ck0(struct B1Expr *expr){
 struct B1Expr *delta(struct B1Expr *e0, std::vector<B1Expr *> *values){
 		const char *pType = values->at(1)->data.b1val.prim->data.b1prim.pType;
 		
-		int val1 = values->at(0)->data.b1val.n;
-		int val2 = e0->data.b1val.n;
+		int val1 = valEval(values->at(0));
+		int val2 = valEval(e0);
 
 		if(strcmp(pType, "+") == 0){
 			return newVal(val1 + val2);

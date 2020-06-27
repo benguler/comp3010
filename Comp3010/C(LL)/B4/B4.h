@@ -51,7 +51,7 @@ struct B4Expr {
 		}b4var;
 			
 		struct{
-			struct B4Expr *var;
+			struct B4Expr *recName;
 			std::vector<B4Expr *> *vars;
 			struct B4Expr *expr;
 			
@@ -118,7 +118,7 @@ struct B4Expr *newPrim(const char *pType);
 
 struct B4Expr *newVar(const char *vName);
 
-struct B4Expr *newLambda(int n, struct B4Expr *var, struct B4Expr *expr1, ...);
+struct B4Expr *newLambda(int n, struct B4Expr *recName, struct B4Expr *expr1, ...);
 
 struct B4Expr *newClosure(struct B4Expr *lambda, struct VarMap *env);
 
@@ -146,7 +146,7 @@ int valEval(struct B4Expr *expr);
 
 struct B4Expr *delta(struct B4Expr *e0, std::vector<B4Expr *> *values, int t);
 
-struct B4Expr *cek1(struct B4Expr *expr, struct VarMap *vm);
+struct B4Expr *cek2(struct B4Expr *expr, struct VarMap *env);
 
 int main(int argc, char**argv);
 

@@ -35,7 +35,7 @@ struct B3Expr {
 			bool b;
 			int n;
 			struct B3Expr *prim;
-			struct B3Expr *lamb;
+			struct B3Expr *lambda;
 			struct B3Expr *closure;
 			
 		} b3val;
@@ -141,11 +141,11 @@ struct VarMap *copyVarMap(struct VarMap *vm);
 
 int findIndex(std::vector<const char *> *v, const char *s);
 
-int valEval(struct B2Expr *expr);
+int valEval(struct B3Expr *expr);
 
 struct B3Expr *delta(struct B3Expr *e0, std::vector<B3Expr *> *values, int t);
 
-struct B3Expr *cek1(struct B3Expr *expr, struct VarMap *vm);
+struct B3Expr *cek1(struct B3Expr *expr, struct VarMap *env);
 
 int main(int argc, char**argv);
 

@@ -132,13 +132,13 @@ struct B4Expr *newVar(const char *vName){
 	
 }
 
-struct B4Expr *newLambda(int n, struct B4Expr *var, struct B4Expr *expr1, ...){
+struct B4Expr *newLambda(int n, struct B4Expr *recName, struct B4Expr *expr1, ...){
 	struct B4Expr *expr = (struct B4Expr *)malloc(sizeof(struct B4Expr));
 
 	expr->type = LAMB;
 
 	expr->data.b4lambda.expr = expr1;
-	expr->data.b4lambda.var = var;
+	expr->data.b4lambda.recName = recName;
 
 	std::vector<B4Expr *> *vars;
 
@@ -318,8 +318,14 @@ int valEval(struct B4Expr *expr){
 			return expr->data.b4val.n;
 			break;	
 		case VALBOOL:
-			return expr->data.b4val.b;
-			break;	
+			if(expr->data.b4val.b){
+				return 1;
+					
+			}
+			
+			return 0;
+			
+			break;		
 		default:
 			return 0;
 			break;	
@@ -350,8 +356,8 @@ struct B4Expr *delta(struct B4Expr *e0, std::vector<B4Expr *> *values, int t){
 				{
 				const char *pType = values->at(1)->data.b4val.prim->data.b4prim.pType;
 				
-				int val1 = values->at(0)->data.b4val.n;
-				int val2 = e0->data.b4val.n;
+				int val1 = valEval(values->at(0));
+				int val2 = valEval(e0);
 		
 				if(strcmp(pType, "+") == 0){
 					return newVal(val1 + val2);
@@ -429,7 +435,7 @@ struct B4Expr *delta(struct B4Expr *e0, std::vector<B4Expr *> *values, int t){
 }
 
 
-struct B4Expr *cek1(struct B4Expr *expr, struct VarMap *env){
+struct B4Expr *cek2(struct B4Expr *expr, struct VarMap *env){
 	struct B4Expr *c = expr;
 	
 	struct B4Con *k = newKRet();
@@ -468,12 +474,24 @@ struct B4Expr *cek1(struct B4Expr *expr, struct VarMap *env){
 			case VAL:
 				switch(c->data.b4val.type){
 					case VALLAMB:
-						c = newVal(newClosure(c, env));
-						env = newVarMap();
-						//k = k
+						{
+							struct VarMap *newEnv = newVarMap();
+							
+							for(int i = 0; i < env->keys->size(); i++){
+								plugVar(newEnv, newVar(env->keys->at(i)), env->values->at(i));
+								
+							}
+							
+							c = newVal(newClosure(c, newEnv));
+							
+							plugVar(newEnv, c->data.b4val.lambda->data.b4lambda.recName, c);
+							
+							env = newVarMap();
+							//k = k
+							
+							break;
+						}
 						
-						break;
-					
 					default:
 						switch(k->type){
 							case KRET:

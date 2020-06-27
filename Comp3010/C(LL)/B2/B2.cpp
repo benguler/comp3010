@@ -62,7 +62,7 @@ struct B2Expr *newVal(int n){
 	expr->type = VAL;
 	
 	expr->data.b2val.n = n;
-	expr->data.b2val.isBool = false;
+	expr->data.b2val.type = VALNUM;
 	
 	return expr;
 	
@@ -74,18 +74,29 @@ struct B2Expr *newVal(bool b){
 	expr->type = VAL;
 	
 	expr->data.b2val.b = b;
-	expr->data.b2val.isBool = true;
+	expr->data.b2val.type = VALBOOL;
 	
 	return expr;
 	
 }
 
-struct B2Expr *newVal(struct B2Expr *prim){
+struct B2Expr *newVal(struct B2Expr *expr1){
 	struct B2Expr *expr = (struct B2Expr *)malloc(sizeof(struct B2Expr));
 	
 	expr->type = VAL;
 	
-	expr->data.b2val.prim = prim;
+	switch(expr1->type){
+		case PRIM:
+			expr->data.b2val.prim = expr1;
+			expr->data.b2val.type = VALPRIM;
+			break;
+		case FUNC:
+			expr->data.b2val.func = expr1;
+			expr->data.b2val.type = VALFUNC;
+			break;
+		default:
+			break;
+	}
 	
 	return expr;
 	
@@ -127,7 +138,7 @@ struct B2Expr *newFunc(const char *fName){
 struct B2Def *newDef(int n, struct B2Expr *func, struct B2Expr *expr1, ...){
 	struct B2Def *def = (struct B2Def *)malloc(sizeof(struct B2Def));
 	
-	def->func = func;
+	def->func = func->data.b2val.func;
 	def->expr = expr1;
 	
 	va_list args;
@@ -292,15 +303,15 @@ void define(struct FuncMap *funcMap, struct B2Def *def){
 }
 
 struct B2Expr *ck1(struct B2Expr *expr, struct FuncMap *fm){
-	struct B2Expr *e = expr;
+	struct B2Expr *c = expr;
 	
 	struct B2Con *k = newKRet();
 	
 	while(true){
-		switch(e->type){
+		switch(c->type){
 			case IF:
-				k = newKIf(e->data.b2if.expr2,  e->data.b2if.expr3, copyK(k));
-				e = e->data.b2if.expr1;
+				k = newKIf(c->data.b2if.expr2,  c->data.b2if.expr3, copyK(k));
+				c = c->data.b2if.expr1;
 				break;
 				
 			case APP:
@@ -308,27 +319,27 @@ struct B2Expr *ck1(struct B2Expr *expr, struct FuncMap *fm){
 					std::vector<B2Expr *> *values = new std::vector<B2Expr *>;
 					
 					std::vector<B2Expr *> *exprs = new std::vector<B2Expr *>;
-					for(int i = 1; i < e->data.b2app.exprs->size(); i++){
-						exprs->push_back(e->data.b2app.exprs->at(i));
+					for(int i = 1; i < c->data.b2app.exprs->size(); i++){
+						exprs->push_back(c->data.b2app.exprs->at(i));
 						
 					}
 					
 					k = newKApp(values, exprs, copyK(k));
-					e = e->data.b2app.exprs->at(0);
+					c = c->data.b2app.exprs->at(0);
 				}
 				break;
 			
 			default:
 				 switch(k->type){
 				 	case KRET:
-				 		return e;
+				 		return c;
 				 		
 				 	case KIF:
-				 		if(e->data.b2val.b){
-				 			e = k->data.kif.expr1;
+				 		if(c->data.b2val.b){
+				 			c = k->data.kif.expr1;
 				 			
 						}else{
-							e = k->data.kif.expr2;
+							c = k->data.kif.expr2;
 						 	
 						}
 				 		
@@ -340,21 +351,24 @@ struct B2Expr *ck1(struct B2Expr *expr, struct FuncMap *fm){
 				 		{	 
 					 		if(k->data.kapp.exprs->size() == 0){
 				 				if(k->data.kapp.values->size() != 0){
-					 				switch(k->data.kapp.values->at(k->data.kapp.values->size()-1)->type){
-									 	case FUNC:
-									 		e = delta(e, k->data.kapp.values, 1, fm);
+					 				switch(k->data.kapp.values->at(k->data.kapp.values->size()-1)->data.b2val.type){
+									 	case VALFUNC:
+									 		c = delta(c, k->data.kapp.values, 1, fm);
 							 				k = k->data.kapp.k;
 									 		break;
 									 		
-									 	default:
-							 				e = delta(e, k->data.kapp.values, 0, fm);
+									 	case VALPRIM:
+							 				c = delta(c, k->data.kapp.values, 0, fm);
 							 				k = k->data.kapp.k;
+						 					break;
+						 					
+						 				default:
 						 					break;
 						 					
 						 			}
 						 			
 								}else{
-									e = delta(e, k->data.kapp.values, 1, fm);
+									c = delta(c, k->data.kapp.values, 1, fm);
 					 				k = k->data.kapp.k;
 									
 								}
@@ -369,14 +383,14 @@ struct B2Expr *ck1(struct B2Expr *expr, struct FuncMap *fm){
 								
 								std::vector<B2Expr *> *values = new std::vector<B2Expr *>;
 								
-								values->push_back(e);
+								values->push_back(c);
 								
 								for(int i = 0; i < k->data.kapp.values->size(); i++){
 									values->push_back(k->data.kapp.values->at(i));
 									
 								}
 							 	
-							 	e = k->data.kapp.exprs->at(0);
+							 	c = k->data.kapp.exprs->at(0);
 							 	k = newKApp(values, exprs, k->data.kapp.k);
 							 	
 							}
@@ -404,8 +418,8 @@ struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values, int t, st
 				{
 				const char *pType = values->at(1)->data.b2val.prim->data.b2prim.pType;
 				
-				int val1 = values->at(0)->data.b2val.n;
-				int val2 = e0->data.b2val.n;
+				int val1 = valEval(values->at(0));
+				int val2 = valEval(e0);
 		
 				if(strcmp(pType, "+") == 0){
 					return newVal(val1 + val2);
@@ -468,7 +482,7 @@ struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values, int t, st
 			case 1:
 				{
 					if(values->size() != 0){
-						const char *fName = values->at(values->size()-1)->data.b2func.fName;
+						const char *fName = values->at(values->size()-1)->data.b2val.func->data.b2func.fName;
 						struct B2Def *fDef = fm->values->at(findIndex(fm->keys, fName));
 						
 						std::vector<B2Expr *> *newValues = new std::vector<B2Expr *>; 
@@ -484,7 +498,7 @@ struct B2Expr *delta(struct B2Expr *e0, std::vector<B2Expr *> *values, int t, st
 						return fBody;
 						
 					}else{
-						const char *fName = e0->data.b2func.fName;
+						const char *fName = e0->data.b2val.func->data.b2func.fName;
 						struct B2Def *fDef = fm->values->at(findIndex(fm->keys, fName));
 						
 						return fDef->expr;
@@ -586,21 +600,21 @@ struct B2Expr *substitute(struct B2Def *def, std::vector<B2Expr *> *values, stru
 }
 
 struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm){
-	struct B2Expr *e = expr;
+	struct B2Expr *c = expr;
 	
 	struct B2Con *k = newKRet();
 	
 	while(true){
-		switch(e->type){
+		switch(c->type){
 			case VAR:
-				e = getVar(env, e);
+				c = getVar(env, c);
 				env = newVarMap();
 				//k = k
 				break;
 			
 			case IF:
-				k = newKIf(copyVarMap(env), e->data.b2if.expr2, e->data.b2if.expr3, copyK(k));
-				e = e->data.b2if.expr1;
+				k = newKIf(copyVarMap(env), c->data.b2if.expr2, c->data.b2if.expr3, copyK(k));
+				c = c->data.b2if.expr1;
 				//env = env
 				break;
 				
@@ -609,32 +623,32 @@ struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm)
 					std::vector<B2Expr *> *values = new std::vector<B2Expr *>;
 					
 					std::vector<B2Expr *> *exprs = new std::vector<B2Expr *>;
-					for(int i = 1; i < e->data.b2app.exprs->size(); i++){
-						exprs->push_back(e->data.b2app.exprs->at(i));
+					for(int i = 1; i < c->data.b2app.exprs->size(); i++){
+						exprs->push_back(c->data.b2app.exprs->at(i));
 						
 					}
 					
 					k = newKApp(values, copyVarMap(env), exprs, copyK(k));
-					e = e->data.b2app.exprs->at(0);
+					c = c->data.b2app.exprs->at(0);
 					//env = env
 				}
 				
 				break;
 				
-			default:
+			case VAL:
 				switch(k->type){
 					case KRET:
-				 		return e;
+				 		return c;
 				 		
 					case KIF:
-						if(e->data.b2val.b == false){
+						if(c->data.b2val.b == false){
 							env = k->data.kif.env;
-							e = k->data.kif.expr2;
+							c = k->data.kif.expr2;
 							k = k->data.kif.k;
 							
 						}else{
 							env = k->data.kif.env;
-							e = k->data.kif.expr1;
+							c = k->data.kif.expr1;
 							k = k->data.kif.k;
 							
 						}
@@ -657,9 +671,9 @@ struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm)
 								
 							}
 							
-							values->push_back(e);
+							values->push_back(c);
 						 	
-						 	e = k->data.kapp.exprs->at(0);
+						 	c = k->data.kapp.exprs->at(0);
 						 	env = k->data.kapp.env;
 						 	k = newKApp(values, k->data.kapp.env, exprs, k->data.kapp.k);
 							
@@ -669,10 +683,10 @@ struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm)
 								std::vector<B2Expr *> *values = k->data.kapp.values;
 								 			
 								
-								switch(values->at(0)->type){
-								 	case FUNC:
+								switch(values->at(0)->data.b2val.type){
+								 	case VALFUNC:
 								 		{
-									 		struct B2Def *def = getDef(fm, values->at(0));
+									 		struct B2Def *def = getDef(fm, values->at(0)->data.b2val.func);
 									 		
 									 		struct VarMap *newVm = newVarMap();	//Without dynamic scope
 									 		//struct VarMap *newVm = env;	//With dynamic scope
@@ -682,10 +696,10 @@ struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm)
 													
 											}
 											
-											plugVar(newVm, def->vars->at(def->vars->size()-1), e);
+											plugVar(newVm, def->vars->at(def->vars->size()-1), c);
 									 		
 									 		env = newVm;
-									 		e = def->expr;
+									 		c = def->expr;
 							 				k = k->data.kapp.k;
 						 				}
 								 		break;
@@ -697,15 +711,15 @@ struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm)
 							 				revValues->push_back(values->at(values->size()-1-i));
 							 			
 									 	}
-						 				e = delta(e, revValues, 0, fm);
+						 				c = delta(c, revValues, 0, fm);
 						 				k = k->data.kapp.k;
 					 					break;
 					 					
 					 			}
 								
 							}else{
-								struct B2Def *def = getDef(fm, e);
-								e = def->expr;
+								struct B2Def *def = getDef(fm, c->data.b2val.func);
+								c = def->expr;
 			 					k = k->data.kapp.k;
 			 					env = newVarMap();
 							
@@ -767,15 +781,26 @@ struct VarMap *copyVarMap(struct VarMap *vm){
 }
 
 int valEval(struct B2Expr *expr){
-	if(!expr->data.b2val.isBool){
-		return expr->data.b2val.n;
-		
-	}else if(expr->data.b2val.b){
-		return 1;
-		
+	switch(expr->data.b2val.type){
+		case VALNUM:
+			return expr->data.b2val.n;
+			break;	
+		case VALBOOL:
+			if(expr->data.b2val.b){
+				return 1;
+					
+			}
+			
+			return 0;
+			
+			break;	
+		case VALPRIM:
+			return 0;
+			break;	
+		case VALFUNC:
+			return 0;
+			break;	
 	}
-	
-	return 0;
 	
 }
 

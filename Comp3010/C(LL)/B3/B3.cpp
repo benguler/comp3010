@@ -92,12 +92,12 @@ struct B3Expr *newVal(struct B3Expr *expr1){
 			break;
 			
 		case LAMB:
-			expr->data.b3val.lamb = expr1;
-			expr->data.b3val.type = VALPRIM;
+			expr->data.b3val.lambda = expr1;
+			expr->data.b3val.type = VALLAMB;
 			break;
 			
 		case CLOS:
-			expr->data.b3val.lamb = expr1;
+			expr->data.b3val.closure = expr1;
 			expr->data.b3val.type = VALCLOS;
 			break;
 	
@@ -265,7 +265,6 @@ struct B3Expr *getVar(struct VarMap *varMap, B3Expr *var){
 	int index = findIndex(varMap->keys, vName);
 	
 	if (index == -1){
-		cout<<"As it should be"<<endl;
 		return newVal(false);
 		
 	}
@@ -317,8 +316,14 @@ int valEval(struct B3Expr *expr){
 			return expr->data.b3val.n;
 			break;	
 		case VALBOOL:
-			return expr->data.b3val.b;
-			break;	
+			if(expr->data.b3val.b){
+				return 1;
+					
+			}
+			
+			return 0;
+			
+			break;		
 		default:
 			return 0;
 			break;	
@@ -346,8 +351,8 @@ struct B3Expr *delta(struct B3Expr *e0, std::vector<B3Expr *> *values, int t){
 				{
 				const char *pType = values->at(1)->data.b3val.prim->data.b3prim.pType;
 				
-				int val1 = values->at(0)->data.b3val.n;
-				int val2 = e0->data.b3val.n;
+				int val1 = valEval(values->at(0));
+				int val2 = valEval(e0);
 		
 				if(strcmp(pType, "+") == 0){
 					return newVal(val1 + val2);
@@ -414,6 +419,9 @@ struct B3Expr *delta(struct B3Expr *e0, std::vector<B3Expr *> *values, int t){
 				}
 				
 				break;
+				
+			default:
+				break;
 			
 		}
 			
@@ -426,7 +434,7 @@ struct B3Expr *cek1(struct B3Expr *expr, struct VarMap *env){
 	struct B3Expr *c = expr;
 	
 	struct B3Con *k = newKRet();
-	
+
 	while(true){
 		switch(c->type){
 			case VAR:
@@ -464,6 +472,8 @@ struct B3Expr *cek1(struct B3Expr *expr, struct VarMap *env){
 						c = newVal(newClosure(c, env));
 						env = newVarMap();
 						//k = k
+						
+						break;
 					
 					default:
 						switch(k->type){
@@ -510,26 +520,26 @@ struct B3Expr *cek1(struct B3Expr *expr, struct VarMap *env){
 								}else{
 									std::vector<B3Expr *> *values = k->data.kapp.values;
 									 			
-									
 									switch(values->at(0)->data.b3val.type){
 										case VALCLOS:
 											{
-												struct B3Expr *lambda =  values->at(0)->data.b3val.closure->data.b3closure.lambda;
-												
-												c = lambda->data.b3lambda.expr;
-												
-												env = c->data.b3val.closure->data.b3closure.env;
-												
+												struct B3Expr *lambda =  values->at(0)->data.b3val.closure->data.b3closure.lambda->data.b3val.lambda;
+	
+												env = values->at(0)->data.b3val.closure->data.b3closure.env;
+
 												std::vector<B3Expr *> *vars = lambda->data.b3lambda.vars;
-												
+
 												for(int i = 1; i < values->size(); i++){
 													plugVar(env, vars->at(i-1), values->at(i));
 														
 												}
-												
+
 												plugVar(env, vars->at(vars->size()-1), c);
-												
+
 												k = k->data.kapp.k;
+
+												c = lambda->data.b3lambda.expr;
+
 											}
 											
 											break;
@@ -560,8 +570,11 @@ struct B3Expr *cek1(struct B3Expr *expr, struct VarMap *env){
 						
 					}
 				}
-			
+				
             	break;
+
+			default:
+				exit(-1);
 
 		}
 		

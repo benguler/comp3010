@@ -6,12 +6,13 @@
 #include <vector>
 #include <stdarg.h>
 
-#ifndef B1_H
-#define B1_H
+#ifndef B2_H
+#define B2_H
 
 using namespace std;
 
 enum ExprType { IF, APP, VAL, PRIM, VAR, FUNC};
+enum ValType { VALBOOL, VALNUM, VALPRIM, VALFUNC};
 
 struct B2Def{
 	struct B2Expr *func;
@@ -37,7 +38,7 @@ struct B2Expr {
 		} b2app;
 		
 		struct {
-			bool isBool;
+			enum ValType type;
 			bool b;
 			int n;
 			struct B2Expr *prim;
@@ -114,7 +115,7 @@ struct B2Expr *newVal(int n);
 
 struct B2Expr *newVal(bool b);
 
-struct B2Expr *newVal(struct B2Expr *prim);
+struct B2Expr *newVal(struct B2Expr *expr1);
 
 struct B2Expr *newPrim(const char *pType);
 
