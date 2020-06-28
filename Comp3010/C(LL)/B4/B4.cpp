@@ -8,6 +8,8 @@
 
 #include "B4.h"
 
+bool testing = false;
+
 struct B4Expr *newIf(struct B4Expr *expr1, struct B4Expr *expr2, struct B4Expr *expr3){
 	struct B4Expr *expr = (struct B4Expr *)malloc(sizeof(struct B4Expr));
 	
@@ -26,13 +28,11 @@ struct B4Expr *newApp(int n, ...){
 
 	expr->type = APP;
 
-	std::vector<B4Expr *> *exprs;
+	expr->data.b4app.exprs = new std::vector<B4Expr *>;
 
 	va_list args;
 
 	va_start(args, n);
-	
-	expr->data.b4app.exprs = new std::vector<B4Expr *>;
 
 	for(int i = 0; i<n; i++){
 		expr->data.b4app.exprs->push_back(va_arg(args, struct B4Expr *));
@@ -140,8 +140,6 @@ struct B4Expr *newLambda(int n, struct B4Expr *recName, struct B4Expr *expr1, ..
 	expr->data.b4lambda.expr = expr1;
 	expr->data.b4lambda.recName = recName;
 
-	std::vector<B4Expr *> *vars;
-
 	va_list args;
 
 	va_start(args, *expr1);
@@ -159,6 +157,19 @@ struct B4Expr *newLambda(int n, struct B4Expr *recName, struct B4Expr *expr1, ..
 	
 }
 
+struct B4Expr *newLambda(struct B4Expr *recName, struct B4Expr *expr1, std::vector<B4Expr *> *vars){
+	struct B4Expr *expr = (struct B4Expr *)malloc(sizeof(struct B4Expr));
+
+	expr->type = LAMB;
+
+	expr->data.b4lambda.expr = expr1;
+	expr->data.b4lambda.recName = recName;	
+	expr->data.b4lambda.vars = vars;
+
+	return expr;
+	
+}
+
 struct B4Expr *newClosure(struct B4Expr *lambda, struct VarMap *env){
 	struct B4Expr *expr = (struct B4Expr *)malloc(sizeof(struct B4Expr));
 	
@@ -168,6 +179,40 @@ struct B4Expr *newClosure(struct B4Expr *lambda, struct VarMap *env){
 	expr->data.b4closure.env = env;
 	
 	return expr;
+	
+}
+
+struct B4Expr *copyExpr(struct B4Expr *expr){
+	switch(expr->type){
+		case VAL:
+			switch(expr->data.b4val.type){
+				case VALCLOS:
+					return newVal(newClosure(expr->data.b4val.closure->data.b4closure.lambda, expr->data.b4val.closure->data.b4closure.env));
+					
+				case VALLAMB:
+					return newVal(newLambda(expr->data.b4val.lambda->data.b4lambda.recName, expr->data.b4val.lambda->data.b4lambda.expr, expr->data.b4val.lambda->data.b4lambda.vars));
+					
+				case VALPRIM:
+					return newVal(expr->data.b4val.prim);
+					
+				case VALBOOL:
+					return newVal(expr->data.b4val.b);
+				case VALNUM:
+					return newVal(expr->data.b4val.n);
+				
+			}
+			
+		case IF:
+			return newIf(expr->data.b4if.expr1, expr->data.b4if.expr2, expr->data.b4if.expr3);
+			
+		case APP:
+			return newApp(expr->data.b4app.exprs);
+			
+			
+	}
+	
+	exit(-1);
+	return newVal(false);
 	
 }
 
@@ -234,47 +279,6 @@ struct B4Con *newKApp(std::vector<B4Expr *> *values, struct VarMap *env, std::ve
 	
 }
 
-struct VarMap *newVarMap(){
-	struct VarMap *vm = (struct VarMap *)malloc(sizeof(struct VarMap));
-	
-	vm->keys = new std::vector<const char *>;
-	vm->values = new std::vector<struct B4Expr *>; 
-	
-	return vm;
-	
-}
-
-void plugVar(struct VarMap *varMap, struct B4Expr *var, struct B4Expr *val){
-	const char *vName = var->data.b4var.vName;
-	
-	int index = findIndex(varMap->keys, vName);
-	
-	if(index == -1){
-		varMap->keys->push_back(vName);
-		varMap->values->push_back(val);
-		
-	}else{
-		varMap->values->at(index) = val;
-		
-	}
-	
-}
-
-struct B4Expr *getVar(struct VarMap *varMap, B4Expr *var){
-	const char *vName = var->data.b4var.vName;
-	
-	int index = findIndex(varMap->keys, vName);
-	
-	if (index == -1){
-		cout<<"As it should be"<<endl;
-		return newVal(false);
-		
-	}
-	
-	return varMap->values->at(index);
-	
-}
-
 struct B4Con *copyK(struct B4Con *k){
 	struct B4Con *con = (struct B4Con *)malloc(sizeof(struct B4Con));
 	
@@ -296,6 +300,50 @@ struct B4Con *copyK(struct B4Con *k){
 	}
 	
 	return con;	
+	
+}
+
+struct VarMap *newVarMap(){
+	struct VarMap *vm = (struct VarMap *)malloc(sizeof(struct VarMap));
+	
+	vm->keys = new std::vector<const char *>;
+	vm->values = new std::vector<struct B4Expr *>; 
+	
+	return vm;
+	
+}
+
+void plugVar(struct VarMap *varMap, struct B4Expr *var, struct B4Expr *val){
+	if(testing){cout<<"All Good 9.6.1"<<endl;}
+	const char *vName = var->data.b4var.vName;
+	if(testing){cout<<"All Good 9.6.2"<<endl;}
+	int index = findIndex(varMap->keys, vName);
+	if(testing){cout<<"All Good 9.6.3"<<endl;}
+	if(index == -1){
+		varMap->keys->push_back(vName);
+		varMap->values->push_back(val);
+		
+	}else{
+		varMap->values->at(index) = val;
+		
+	}
+	
+}
+
+struct B4Expr *getVar(struct VarMap *varMap, B4Expr *var){
+	const char *vName = var->data.b4var.vName;
+
+	int index = findIndex(varMap->keys, vName);
+
+	if (index == -1){
+		cout<<vName<<endl;
+		cout<<varMap->keys->size()<<endl;
+		exit(-1);
+		return newVal(false);
+		
+	}
+	
+	return varMap->values->at(index);
 	
 }
 
@@ -348,11 +396,10 @@ int findIndex(std::vector<const char *> *v, const char *s){
 }
 
 struct B4Expr *delta(struct B4Expr *e0, std::vector<B4Expr *> *values, int t){
-	cout<<"All good "<<"13"<<endl;
+	if(testing){cout<<"All Good 11"<<endl;}
 		switch(t){
 			case 0:
-				cout<<"All good "<<"14"<<endl;
-				//cout<<"AAAA "<<values->at(1)->data.b4val.prim->data.b4prim.pType<<" AAAA"<<endl;
+				if(testing){cout<<"All Good 12"<<endl;}
 				{
 				const char *pType = values->at(1)->data.b4val.prim->data.b4prim.pType;
 				
@@ -437,34 +484,39 @@ struct B4Expr *delta(struct B4Expr *e0, std::vector<B4Expr *> *values, int t){
 
 struct B4Expr *cek2(struct B4Expr *expr, struct VarMap *env){
 	struct B4Expr *c = expr;
-	
+	env = newVarMap();
 	struct B4Con *k = newKRet();
 
 	while(true){
+		if(testing){cout<<"All Good XX"<<endl;}
 		switch(c->type){
 			case VAR:
+				if(testing){cout<<"All Good 1"<<endl;}
 				c = getVar(env, c);
 				env = newVarMap();
 				//k = k
 				break;
 			
 			case IF:
-				k = newKIf(copyVarMap(env), c->data.b4if.expr2, c->data.b4if.expr3, copyK(k));
+				if(testing){cout<<"All Good 2"<<endl;}
+				k = newKIf(env, c->data.b4if.expr2, c->data.b4if.expr3, k);
 				c = c->data.b4if.expr1;
 				//env = env
 				break;
 				
 			case APP:
 				{
+					if(testing){cout<<"All Good 3"<<endl;}
 					std::vector<B4Expr *> *values = new std::vector<B4Expr *>;
-					
+
 					std::vector<B4Expr *> *exprs = new std::vector<B4Expr *>;
+
 					for(int i = 1; i < c->data.b4app.exprs->size(); i++){
 						exprs->push_back(c->data.b4app.exprs->at(i));
 						
 					}
 					
-					k = newKApp(values, copyVarMap(env), exprs, copyK(k));
+					k = newKApp(values, env, exprs, k);
 					c = c->data.b4app.exprs->at(0);
 					//env = env
 				}
@@ -474,18 +526,15 @@ struct B4Expr *cek2(struct B4Expr *expr, struct VarMap *env){
 			case VAL:
 				switch(c->data.b4val.type){
 					case VALLAMB:
+						if(testing){cout<<"All Good 4"<<endl;}
 						{
 							struct VarMap *newEnv = newVarMap();
+
+							struct B4Expr *recName = c->data.b4val.lambda->data.b4lambda.recName;
 							
-							for(int i = 0; i < env->keys->size(); i++){
-								plugVar(newEnv, newVar(env->keys->at(i)), env->values->at(i));
-								
-							}
-							
+							plugVar(newEnv, recName, newVal(newClosure(c, newEnv)));
+
 							c = newVal(newClosure(c, newEnv));
-							
-							plugVar(newEnv, c->data.b4val.lambda->data.b4lambda.recName, c);
-							
 							env = newVarMap();
 							//k = k
 							
@@ -495,25 +544,27 @@ struct B4Expr *cek2(struct B4Expr *expr, struct VarMap *env){
 					default:
 						switch(k->type){
 							case KRET:
+								if(testing){cout<<"All Good 5"<<endl;}
 						 		return c;
 						 		
 							case KIF:
+								if(testing){cout<<"All Good 7"<<endl;}
 								if(c->data.b4val.b == false){
-									env = k->data.kif.env;
 									c = k->data.kif.expr2;
-									k = k->data.kif.k;
 									
 								}else{
-									env = k->data.kif.env;
 									c = k->data.kif.expr1;
-									k = k->data.kif.k;
 									
 								}
+								
+								env = k->data.kif.env;
+								k = k->data.kif.k;
 								
 								break;
 								
 							case KAPP:
 								if(k->data.kapp.exprs->size() != 0){
+									if(testing){cout<<"All Good 8"<<endl;}
 									std::vector<B4Expr *> *exprs = new std::vector<B4Expr *>;
 						
 									for(int i = 1; i < k->data.kapp.exprs->size(); i++){
@@ -528,7 +579,7 @@ struct B4Expr *cek2(struct B4Expr *expr, struct VarMap *env){
 										
 									}
 									
-									values->push_back(c);
+									values->push_back(copyExpr(c));
 								 	
 								 	c = k->data.kapp.exprs->at(0);
 								 	env = k->data.kapp.env;
@@ -539,22 +590,23 @@ struct B4Expr *cek2(struct B4Expr *expr, struct VarMap *env){
 									 			
 									switch(values->at(0)->data.b4val.type){
 										case VALCLOS:
+											if(testing){cout<<"All Good 9"<<endl;}
 											{
-												struct B4Expr *lambda =  values->at(0)->data.b4val.closure->data.b4closure.lambda->data.b4val.lambda;
-	
-												env = values->at(0)->data.b4val.closure->data.b4closure.env;
-
+												struct B4Expr *lambda = values->at(0)->data.b4val.closure->data.b4closure.lambda->data.b4val.lambda;
+											
+												env = copyVarMap(values->at(0)->data.b4val.closure->data.b4closure.env);
+											
 												std::vector<B4Expr *> *vars = lambda->data.b4lambda.vars;
-
+											
 												for(int i = 1; i < values->size(); i++){
 													plugVar(env, vars->at(i-1), values->at(i));
-														
+														 
 												}
-
+											
 												plugVar(env, vars->at(vars->size()-1), c);
-
+											
 												k = k->data.kapp.k;
-
+										
 												c = lambda->data.b4lambda.expr;
 
 											}
@@ -563,6 +615,7 @@ struct B4Expr *cek2(struct B4Expr *expr, struct VarMap *env){
 										
 									 	default:
 									 		{
+									 			if(testing){cout<<"All Good 10"<<endl;}
 										 		std::vector<B4Expr *> *revValues = new std::vector<B4Expr *>;
 										 		
 									 			for(int i = 0; i <  k->data.kapp.values->size(); i++){
@@ -570,6 +623,7 @@ struct B4Expr *cek2(struct B4Expr *expr, struct VarMap *env){
 									 			
 											 	}
 								 				c = delta(c, revValues, 0);
+								 				env = newVarMap();
 								 				k = k->data.kapp.k;
 							 					
 							 				}
@@ -598,4 +652,3 @@ struct B4Expr *cek2(struct B4Expr *expr, struct VarMap *env){
 	}
 	
 }
-

@@ -613,7 +613,7 @@ struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm)
 				break;
 			
 			case IF:
-				k = newKIf(copyVarMap(env), c->data.b2if.expr2, c->data.b2if.expr3, copyK(k));
+				k = newKIf(copyVarMap(env), c->data.b2if.expr2, c->data.b2if.expr3, k);
 				c = c->data.b2if.expr1;
 				//env = env
 				break;
@@ -628,7 +628,7 @@ struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm)
 						
 					}
 					
-					k = newKApp(values, copyVarMap(env), exprs, copyK(k));
+					k = newKApp(values, copyVarMap(env), exprs, k);
 					c = c->data.b2app.exprs->at(0);
 					//env = env
 				}
@@ -642,12 +642,12 @@ struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm)
 				 		
 					case KIF:
 						if(c->data.b2val.b == false){
-							env = k->data.kif.env;
+							//env = env
 							c = k->data.kif.expr2;
 							k = k->data.kif.k;
 							
 						}else{
-							env = k->data.kif.env;
+							//env = env
 							c = k->data.kif.expr1;
 							k = k->data.kif.k;
 							

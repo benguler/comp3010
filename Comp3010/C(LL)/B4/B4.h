@@ -100,6 +100,7 @@ struct B4Con {
 struct VarMap{
 	std::vector<const char *> *keys;
 	std::vector<B4Expr *> *values;
+	
 };
 
 struct B4Expr *newIf(struct B4Expr *expr1, struct B4Expr *expr2, struct B4Expr *expr3);
@@ -147,6 +148,8 @@ int valEval(struct B4Expr *expr);
 struct B4Expr *delta(struct B4Expr *e0, std::vector<B4Expr *> *values, int t);
 
 struct B4Expr *cek2(struct B4Expr *expr, struct VarMap *env);
+
+struct B4Expr *copyExpr(struct B4Expr *expr);
 
 int main(int argc, char**argv);
 

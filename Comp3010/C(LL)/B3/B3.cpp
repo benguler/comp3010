@@ -444,7 +444,7 @@ struct B3Expr *cek1(struct B3Expr *expr, struct VarMap *env){
 				break;
 			
 			case IF:
-				k = newKIf(copyVarMap(env), c->data.b3if.expr2, c->data.b3if.expr3, copyK(k));
+				k = newKIf(copyVarMap(env), c->data.b3if.expr2, c->data.b3if.expr3, k);
 				c = c->data.b3if.expr1;
 				//env = env
 				break;
@@ -459,7 +459,7 @@ struct B3Expr *cek1(struct B3Expr *expr, struct VarMap *env){
 						
 					}
 					
-					k = newKApp(values, copyVarMap(env), exprs, copyK(k));
+					k = newKApp(values, copyVarMap(env), exprs, k);
 					c = c->data.b3app.exprs->at(0);
 					//env = env
 				}
@@ -482,12 +482,12 @@ struct B3Expr *cek1(struct B3Expr *expr, struct VarMap *env){
 						 		
 							case KIF:
 								if(c->data.b3val.b == false){
-									env = k->data.kif.env;
+									//env = env
 									c = k->data.kif.expr2;
 									k = k->data.kif.k;
 									
 								}else{
-									env = k->data.kif.env;
+									//env = env
 									c = k->data.kif.expr1;
 									k = k->data.kif.k;
 									
