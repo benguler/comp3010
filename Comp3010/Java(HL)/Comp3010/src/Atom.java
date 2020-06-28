@@ -139,8 +139,32 @@ public class Atom implements BSexpr{
 
 	@Override
 	public B4Expr desugarB4Expr() {
-		// TODO Auto-generated method stub
-		return null;
+		try { 												//If atom contains an integer
+	        return new B4Val(Integer.parseInt(atom));
+	       
+	        
+	    } catch(NumberFormatException e) { 
+	        
+	    }
+	 
+		switch(atom) {
+		 	case "true":
+		 		return new B4Val(true);
+		 	case "false":
+		 		return new B4Val(false);
+		 	default:										//If atom does not contain an int or a bool, it contains a prim
+		 		if(atom == "+" || atom == "*" || atom == "/" || atom == "-" 
+				|| atom == ">" || atom == ">=" || atom == "=" || atom == "<"
+				|| atom == "<=") {
+		 			return new B4Val(new B4Prim(atom));
+		 		}
+		 		
+		 		break;
+		 		
+		}
+		
+		return new B4Var(atom);
+		
 	}
 
 }

@@ -18,7 +18,7 @@ public class B4Lambda implements B4Expr{
 		this.vars = new ArrayList<B4Var>();
 		this.vars.add(var0);
 		this.expr = expr;
-		this.recName= recName;
+		this.recName = recName;
 	}
 	
 	
@@ -35,6 +35,10 @@ public class B4Lambda implements B4Expr{
 	public ExprType getType() {
 		return ExprType.LAMB;
 		
+	}
+
+	public B4Var getRecName() {
+		return recName;
 	}
 	
 }

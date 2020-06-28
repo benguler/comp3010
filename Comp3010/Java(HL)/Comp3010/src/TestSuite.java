@@ -192,7 +192,7 @@ class TestSuite {
 		B2Functions.define(b2Func8.desugarB2Def(), fm);
 		
 		Cons b2App1 = c(a("DOUBLE"), c(a("+"), c(a("1"), a("1"))));
-		Cons b2App2 = c(a("DIFFERENCE"), c( c(a("DOUBLE"), a("2")), a("9")));
+		Cons b2App2 = c(a("DIFFERENCE"), c( c(a("+"), c(a("3"), a("1"))), c(a("QUADRUPLE"), a("2"))));
 		Cons b2App3 = c(a("RECUR"), a("13"));
 		Cons b2App4 = c(a("FIB"), a("8"));
 		Cons b2App5 = c(a("FIVE"), e());
@@ -201,7 +201,7 @@ class TestSuite {
 		Cons b2App8 = c(a("UNTILNI"), a("7"));
 		
 		assertEquals(B2Functions.bigStep(b2App1.desugarB2Expr(), new VarMap(), fm), 4,  "DOUBLE");
-		assertEquals(B2Functions.bigStep(b2App2.desugarB2Expr(), new VarMap(), fm), 5,  "DIFFERENCE");
+		assertEquals(B2Functions.bigStep(b2App2.desugarB2Expr(), new VarMap(), fm), 4,  "DIFFERENCE");
 		assertEquals(B2Functions.bigStep(b2App3.desugarB2Expr(), new VarMap(), fm), 6,  "RECUR");
 		assertEquals(B2Functions.bigStep(b2App4.desugarB2Expr(), new VarMap(), fm), 21, "FIB");
 		assertEquals(B2Functions.bigStep(b2App5.desugarB2Expr(), new VarMap(), fm), 5,  "FIVE");
@@ -234,6 +234,55 @@ class TestSuite {
 								  	 b3App5.desugarB3Expr(),
 								  	 b3App6.desugarB3Expr()
 								  	 );
+		
+		//B4 desugar tests
+		
+		Cons b4Expr1 = c(c(a("lambda"), c(a("until0"), c(a("x"),
+							c(a("if"), c(c(a("<="), c(a("x"), a("0"))), 
+									c(a("0"), 
+								    c(a("call"), c(a("until0"), c(a("-"), c(a("x"), a("1"))))))))))),
+				
+						a("12"));
+		
+		Cons b4Expr2 = c(c(a("lambda"), c(e(), c(c(a("x"), a("y")), 
+							c(a("+"), c(a("x"), a("y")))))), 
+				
+						c(a("5"), a("3")));
+		
+		Cons b4Expr3 = c(c(a("lambda"), c(a("nat-unfold"), c(c(a("f"), c(a("z"), a("n"))),
+							c(a("if"), c(c(a("="), c(a("n"), a("0"))),
+									c(a("z"),
+									c(a("call"), c(a("nat-unfold"), c(a("f"), c(a("z"), c(a("-"), c(a("n"), a("1"))))))))))))), 
+				
+					c(a("1"), c(a("2"), a("3"))));
+		
+		Cons b4Expr4 = c(c(a("lambda"), c(a("quadruple"), c(a("x"),
+							c(c(a("lambda"), c(a("double"), c(a("y"),
+									c(a("+"), c(a("y"), a("y")))
+							))), c(a("call"), c(a("+"), c(a("x"), a("x")))))))), 
+						a("3"));
+		
+		Cons b4Expr5 =  c(c(a("lambda"), c(a("fib"), c(a("n"),
+				c(a("if"), c(c(a("<="), c(a("n"), a("1"))),
+					c(a("n"),
+					c(a("+"), c(c(a("call"), c(a("fib"), c(a("-"), c(a("n"), a("1"))))), c(a("call"), c(a("fib"), c(a("-"), c(a("n"), a("2"))))))))))))), 
+
+			a("6"));
+				
+		Cons b4Expr6 = c(c(a("lambda"), c(a("fac"), c(a("n"),
+				c(a("if"), c(c(a("="), c(a("n"), a("0"))),
+						c(a("1"),
+						c(a("*"), c(a("n"), c(a("call"), c(a("fac"), c(a("-"), c(a("n"), a("1"))))))))))))), 
+
+				a("6"));
+		
+		
+		B4Functions.connectTestSuite(b4Expr1.desugarB4Expr(),
+									 b4Expr2.desugarB4Expr(),
+									 b4Expr3.desugarB4Expr(),
+									 b4Expr4.desugarB4Expr(),
+									 b4Expr5.desugarB4Expr(),
+									 b4Expr6.desugarB4Expr());
 		
 	}
 
