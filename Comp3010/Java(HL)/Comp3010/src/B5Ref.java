@@ -5,7 +5,6 @@ public class B5Ref implements B5Expr {
 	private B5Expr e;
 	
 	public B5Ref(B5Expr x, B5Expr e) {
-		super();
 		this.x = x;
 		this.e = e;
 	}
