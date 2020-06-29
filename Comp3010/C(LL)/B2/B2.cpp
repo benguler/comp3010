@@ -688,8 +688,8 @@ struct B2Expr *cek0(struct B2Expr *expr, struct VarMap *env, struct FuncMap *fm)
 								 		{
 									 		struct B2Def *def = getDef(fm, values->at(0)->data.b2val.func);
 									 		
-									 		struct VarMap *newVm = newVarMap();	//Without dynamic scope
-									 		//struct VarMap *newVm = env;	//With dynamic scope
+									 		struct VarMap *newVm = newVarMap();
+									 		//newVm = env;	//With dynamic scope
 									 		
 									 		for(int i = 1; i < values->size(); i++){
 												plugVar(newVm, def->vars->at(i-1), values->at(i));
